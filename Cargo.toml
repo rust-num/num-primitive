@@ -1,6 +1,6 @@
 [package]
 name = "num-primitive"
-version = "0.1.0"
+version = "0.1.1"
 description = "Traits for primitive numeric types"
 repository = "https://github.com/rust-num/num-primitive"
 license = "MIT OR Apache-2.0"
@@ -14,11 +14,16 @@ default = ["std"]
 std = []
 
 [lints.rust]
+missing-docs = "deny"
 private-bounds = "deny"
 private-interfaces = "deny"
 unconditional-recursion = "deny"
 unnameable-types = "deny"
 unreachable-pub = "deny"
+
+[lints.rustdoc]
+broken-intra-doc-links = "deny"
+private-intra-doc-links = "deny"
 
 [package.metadata.release]
 allow-branch = ["main"]

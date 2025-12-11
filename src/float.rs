@@ -485,6 +485,7 @@ macro_rules! impl_float {
 
             // NOTE: This is still effectively forwarding, but we need some indirection
             // to avoid naming the unstable `core::convert::FloatToInt`.
+            #[doc = forward_doc!(to_int_unchecked)]
             #[inline]
             unsafe fn to_int_unchecked<Int>(self) -> Int
             where
