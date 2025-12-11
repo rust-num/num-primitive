@@ -14,11 +14,16 @@ default = ["std"]
 std = []
 
 [lints.rust]
+missing-docs = "deny"
 private-bounds = "deny"
 private-interfaces = "deny"
 unconditional-recursion = "deny"
 unnameable-types = "deny"
 unreachable-pub = "deny"
+
+[lints.rustdoc]
+broken-intra-doc-links = "deny"
+private-intra-doc-links = "deny"
 
 [package.metadata.release]
 allow-branch = ["main"]
