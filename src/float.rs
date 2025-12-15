@@ -54,7 +54,22 @@ struct SealedToken;
 /// assert_eq!(distance_squared::<f64>(&[0., 1., 2.], &[1., 3., 0.]), 9.);
 /// ```
 pub trait PrimitiveFloat:
-    PrimitiveNumber + From<i8> + From<u8> + core::ops::Neg<Output = Self>
+    PrimitiveNumber
+    + PrimitiveFloatToInt<i8>
+    + PrimitiveFloatToInt<i16>
+    + PrimitiveFloatToInt<i32>
+    + PrimitiveFloatToInt<i64>
+    + PrimitiveFloatToInt<i128>
+    + PrimitiveFloatToInt<isize>
+    + PrimitiveFloatToInt<u8>
+    + PrimitiveFloatToInt<u16>
+    + PrimitiveFloatToInt<u32>
+    + PrimitiveFloatToInt<u64>
+    + PrimitiveFloatToInt<u128>
+    + PrimitiveFloatToInt<usize>
+    + core::convert::From<i8>
+    + core::convert::From<u8>
+    + core::ops::Neg<Output = Self>
 {
     /// Approximate number of significant digits in base 10.
     const DIGITS: u32;
@@ -405,7 +420,42 @@ pub trait PrimitiveFloatRef<T>: PrimitiveNumberRef<T> + core::ops::Neg<Output = 
 ///
 /// This is effectively the same as the unstable [`core::convert::FloatToInt`], implemented for all
 /// combinations of [`PrimitiveFloat`] and [`PrimitiveInteger`][crate::PrimitiveInteger].
-pub trait PrimitiveFloatToInt<Int>: PrimitiveFloat {
+///
+/// # Examples
+///
+/// `PrimitiveFloatToInt<{integer}>` is a supertrait of [`PrimitiveFloat`] for all primitive
+/// integers, so you do not need to use this trait directly with concrete integer types.
+///
+/// ```
+/// use num_primitive::PrimitiveFloat;
+///
+/// fn pi<Float: PrimitiveFloat>() -> i32 {
+///     // SAFETY: π is finite, and truncated to 3 fits any int
+///     unsafe { Float::PI.to_int_unchecked() }
+/// }
+///
+/// assert_eq!(pi::<f32>(), 3i32);
+/// assert_eq!(pi::<f64>(), 3i32);
+/// ```
+///
+/// However, if the integer type is also generic, an explicit type constraint is needed.
+///
+/// ```
+/// use num_primitive::{PrimitiveFloat, PrimitiveFloatToInt};
+///
+/// fn tau<Float, Int>() -> Int
+/// where
+///     Float: PrimitiveFloat + PrimitiveFloatToInt<Int>,
+/// {
+///     // SAFETY: τ is finite, and truncated to 6 fits any int
+///     unsafe { Float::TAU.to_int_unchecked() }
+/// }
+///
+/// assert_eq!(tau::<f32, i64>(), 6i64);
+/// assert_eq!(tau::<f64, u8>(), 6u8);
+/// ```
+///
+pub trait PrimitiveFloatToInt<Int> {
     #[doc(hidden)]
     #[expect(private_interfaces)]
     unsafe fn __to_int_unchecked(x: Self, _: SealedToken) -> Int;

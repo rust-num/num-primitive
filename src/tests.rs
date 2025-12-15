@@ -17,7 +17,7 @@ extern crate alloc;
 use alloc::boxed::Box;
 use core::error::Error;
 
-use crate::{PrimitiveError, PrimitiveFloatToInt, PrimitiveInteger, PrimitiveNumber};
+use crate::{PrimitiveError, PrimitiveInteger, PrimitiveNumber};
 
 fn check_result<'a, T: PrimitiveNumber, E: PrimitiveError>(r: Result<T, E>, ok: T) {
     // Cloning and equating results requires `E: Clone + PartialEq`
@@ -57,14 +57,4 @@ fn try_into() {
         check_result(x.try_into(), ok);
     }
     check(0i32, 0u32);
-}
-
-#[test]
-fn to_int_unchecked() {
-    fn pi<T: PrimitiveFloatToInt<Int>, Int>() -> Int {
-        // SAFETY: π is finite, and truncated to 3 fits any int
-        unsafe { T::PI.to_int_unchecked() }
-    }
-    assert_eq!(pi::<f32, i64>(), 3i64);
-    assert_eq!(pi::<f64, u8>(), 3u8);
 }
