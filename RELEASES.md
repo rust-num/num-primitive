@@ -1,3 +1,8 @@
+# Release 0.2.2 (2025-12-16)
+
+- Updated to MSRV 1.86.
+- Added `PrimitiveFloat::next_down` and `next_up`.
+
 # Release 0.2.1 (2025-12-16)
 
 - Doc-only, updated 0.1 references to 0.2.

@@ -224,6 +224,12 @@ pub trait PrimitiveFloat:
     /// Returns the minimum of the two numbers, ignoring NaN.
     fn min(self, other: Self) -> Self;
 
+    /// Returns the greatest number less than `self`.
+    fn next_down(self) -> Self;
+
+    /// Returns the least number greater than `self`.
+    fn next_up(self) -> Self;
+
     /// Takes the reciprocal (inverse) of a number, `1/x`.
     fn recip(self) -> Self;
 
@@ -523,6 +529,8 @@ macro_rules! impl_float {
                 fn max(self, other: Self) -> Self;
                 fn midpoint(self, other: Self) -> Self;
                 fn min(self, other: Self) -> Self;
+                fn next_down(self) -> Self;
+                fn next_up(self) -> Self;
                 fn recip(self) -> Self;
                 fn signum(self) -> Self;
                 fn to_bits(self) -> Self::Bits;
