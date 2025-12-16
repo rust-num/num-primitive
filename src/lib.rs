@@ -72,6 +72,6 @@ mod tests;
 pub use self::error::PrimitiveError;
 pub use self::float::{PrimitiveFloat, PrimitiveFloatRef, PrimitiveFloatToInt};
 pub use self::integer::{PrimitiveInteger, PrimitiveIntegerRef};
-pub use self::number::{PrimitiveNumber, PrimitiveNumberRef};
+pub use self::number::{PrimitiveNumber, PrimitiveNumberAs, PrimitiveNumberRef};
 pub use self::signed::{PrimitiveSigned, PrimitiveSignedRef};
 pub use self::unsigned::{PrimitiveUnsigned, PrimitiveUnsignedRef};
