@@ -38,7 +38,7 @@ Add this to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-num-primitive = "0.1"
+num-primitive = "0.2"
 ```
 
 ## Features
@@ -48,7 +48,7 @@ the default `std` feature. Use this in `Cargo.toml`:
 
 ```toml
 [dependencies.num-primitive]
-version = "0.1"
+version = "0.2"
 default-features = false
 ```
 
