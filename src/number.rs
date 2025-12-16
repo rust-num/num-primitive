@@ -102,7 +102,23 @@ pub trait PrimitiveNumber:
 {
     /// An array of bytes used by methods like [`from_be_bytes`][Self::from_be_bytes] and
     /// [`to_be_bytes`][Self::to_be_bytes]. It is effectively `[u8; size_of::<Self>()]`.
-    type Bytes: core::borrow::Borrow<[u8]> + core::borrow::BorrowMut<[u8]>;
+    type Bytes: 'static
+        + core::borrow::Borrow<[u8]>
+        + core::borrow::BorrowMut<[u8]>
+        + core::cmp::Eq
+        + core::cmp::Ord
+        + core::cmp::PartialEq<[u8]>
+        + core::convert::AsRef<[u8]>
+        + core::convert::AsMut<[u8]>
+        + core::default::Default
+        + core::fmt::Debug
+        + core::hash::Hash
+        + core::marker::Copy
+        + core::marker::Send
+        + core::marker::Sync
+        + core::marker::Unpin
+        + core::panic::RefUnwindSafe
+        + core::panic::UnwindSafe;
 
     /// Creates a number from its representation as a byte array in big endian.
     fn from_be_bytes(bytes: Self::Bytes) -> Self;
