@@ -1,3 +1,7 @@
+# Release 0.2.1 (2025-12-16)
+
+- Doc-only, updated 0.1 references to 0.2.
+
 # Release 0.2.0 (2025-12-15)
 
 - `PrimitiveFloat` includes supertraits `PrimitiveFloatToInt` for all integers.
