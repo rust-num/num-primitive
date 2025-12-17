@@ -1,3 +1,10 @@
+# Release 0.2.3 (2025-12-16)
+
+- Updated to MSRV 1.87.
+- Added `PrimitiveInteger::{unbounded_shl,unbounded_shr}`
+- Added `PrimitiveSigned::{cast_unsigned,midpoint}`
+- Added `PrimitiveUnsigned::{cast_signed,is_multiple_of}`
+
 # Release 0.2.2 (2025-12-16)
 
 - Updated to MSRV 1.86.
