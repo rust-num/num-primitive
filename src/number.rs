@@ -129,6 +129,9 @@ pub trait PrimitiveNumber:
     /// Creates a number from its representation as a byte array in native endian.
     fn from_ne_bytes(bytes: Self::Bytes) -> Self;
 
+    /// Calculates the midpoint (average) between `self` and `other`.
+    fn midpoint(self, other: Self) -> Self;
+
     /// Returns the memory representation of this number as a byte array in little-endian order.
     fn to_be_bytes(self) -> Self::Bytes;
 
@@ -272,6 +275,7 @@ macro_rules! impl_primitive {
                 fn from_ne_bytes(bytes: Self::Bytes) -> Self;
             }
             forward! {
+                fn midpoint(self, other: Self) -> Self;
                 fn to_be_bytes(self) -> Self::Bytes;
                 fn to_le_bytes(self) -> Self::Bytes;
                 fn to_ne_bytes(self) -> Self::Bytes;
