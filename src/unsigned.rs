@@ -40,6 +40,9 @@ pub trait PrimitiveUnsigned: PrimitiveInteger + From<u8> {
     /// Computes the absolute difference between `self` and `other`.
     fn abs_diff(self, other: Self) -> Self;
 
+    /// Returns the bit pattern of `self` reinterpreted as a signed integer of the same size.
+    fn cast_signed(self) -> Self::Signed;
+
     /// Checked addition with a signed integer. Computes `self + rhs`, returning `None` if overflow
     /// occurred.
     fn checked_add_signed(self, rhs: Self::Signed) -> Option<Self>;
@@ -56,7 +59,10 @@ pub trait PrimitiveUnsigned: PrimitiveInteger + From<u8> {
     /// Calculates the quotient of `self` and rhs, rounding the result towards positive infinity.
     fn div_ceil(self, rhs: Self) -> Self;
 
-    /// Returns true if and only if `self == 2^k` for some `k`.
+    /// Returns `true` if `self` is an integer multiple of `rhs`, and false otherwise.
+    fn is_multiple_of(self, rhs: Self) -> bool;
+
+    /// Returns `true` if and only if `self == 2^k` for some `k`.
     fn is_power_of_two(self) -> bool;
 
     /// Calculates the middle point of `self` and `other`.
@@ -94,10 +100,12 @@ macro_rules! impl_unsigned {
 
             forward! {
                 fn abs_diff(self, other: Self) -> Self;
+                fn cast_signed(self) -> Self::Signed;
                 fn checked_add_signed(self, rhs: Self::Signed) -> Option<Self>;
                 fn checked_next_multiple_of(self, rhs: Self) -> Option<Self>;
                 fn checked_next_power_of_two(self) -> Option<Self>;
                 fn div_ceil(self, rhs: Self) -> Self;
+                fn is_multiple_of(self, rhs: Self) -> bool;
                 fn is_power_of_two(self) -> bool;
                 fn midpoint(self, other: Self) -> Self;
                 fn next_multiple_of(self, rhs: Self) -> Self;
