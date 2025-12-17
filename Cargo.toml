@@ -1,13 +1,13 @@
 [package]
 name = "num-primitive"
-version = "0.3.1"
+version = "0.3.2"
 description = "Traits for primitive numeric types"
 repository = "https://github.com/rust-num/num-primitive"
 license = "MIT OR Apache-2.0"
 keywords = ["generic", "mathematics", "numerics", "primitive"]
 categories = ["algorithms", "science", "no-std"]
 edition = "2024"
-rust-version = "1.90"
+rust-version = "1.91"
 
 [features]
 default = ["std"]

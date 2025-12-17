@@ -114,6 +114,17 @@ pub trait PrimitiveSigned: PrimitiveInteger + From<i8> + core::ops::Neg<Output =
     /// Returns a number representing sign of `self`.
     fn signum(self) -> Self;
 
+    /// Strict absolute value. Computes `self.abs()`, panicking if `self == MIN`.
+    fn strict_abs(self) -> Self;
+
+    /// Strict addition with an unsigned integer. Computes `self + rhs`,
+    /// panicking if overflow occurred.
+    fn strict_add_unsigned(self, rhs: Self::Unsigned) -> Self;
+
+    /// Strict subtraction with an unsigned integer. Computes `self - rhs`,
+    /// panicking if overflow occurred.
+    fn strict_sub_unsigned(self, rhs: Self::Unsigned) -> Self;
+
     /// Computes the absolute value of `self` without any wrapping or panicking.
     fn unsigned_abs(self) -> Self::Unsigned;
 
@@ -159,6 +170,9 @@ macro_rules! impl_signed {
                 fn saturating_neg(self) -> Self;
                 fn saturating_sub_unsigned(self, rhs: Self::Unsigned) -> Self;
                 fn signum(self) -> Self;
+                fn strict_abs(self) -> Self;
+                fn strict_add_unsigned(self, rhs: Self::Unsigned) -> Self;
+                fn strict_sub_unsigned(self, rhs: Self::Unsigned) -> Self;
                 fn unsigned_abs(self) -> Self::Unsigned;
                 fn wrapping_abs(self) -> Self;
                 fn wrapping_add_unsigned(self, rhs: Self::Unsigned) -> Self;

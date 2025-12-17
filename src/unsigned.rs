@@ -40,6 +40,21 @@ pub trait PrimitiveUnsigned: PrimitiveInteger + From<u8> {
     /// Computes the absolute difference between `self` and `other`.
     fn abs_diff(self, other: Self) -> Self;
 
+    /// Calculates `self` &minus; `rhs` &minus; `borrow` and returns a tuple
+    /// containing the difference and the output borrow.
+    fn borrowing_sub(self, rhs: Self, borrow: bool) -> (Self, bool);
+
+    /// Calculates `self` + `rhs` + `carry` and returns a tuple containing
+    /// the sum and the output carry (in that order).
+    fn carrying_add(self, rhs: Self, carry: bool) -> (Self, bool);
+
+    /// Calculates the "full multiplication" `self * rhs + carry`
+    /// without the possibility to overflow.
+    fn carrying_mul(self, rhs: Self, carry: Self) -> (Self, Self);
+
+    /// Calculates the "full multiplication" `self * rhs + carry + add`.
+    fn carrying_mul_add(self, rhs: Self, carry: Self, add: Self) -> (Self, Self);
+
     /// Returns the bit pattern of `self` reinterpreted as a signed integer of the same size.
     fn cast_signed(self) -> Self::Signed;
 
@@ -55,6 +70,10 @@ pub trait PrimitiveUnsigned: PrimitiveInteger + From<u8> {
     /// is greater than the type's maximum value, `None` is returned, otherwise the power of two is
     /// wrapped in Some.
     fn checked_next_power_of_two(self) -> Option<Self>;
+
+    /// Checked integer subtraction. Computes `self - rhs` and checks if the result fits into a
+    /// signed integer of the same size, returning `None` if overflow occurred.
+    fn checked_signed_diff(self, rhs: Self) -> Option<Self::Signed>;
 
     /// Checked subtraction with a signed integer. Computes `self - rhs`,
     /// returning `None` if overflow occurred.
@@ -91,6 +110,14 @@ pub trait PrimitiveUnsigned: PrimitiveInteger + From<u8> {
     /// the numeric bounds instead of overflowing.
     fn saturating_sub_signed(self, rhs: Self::Signed) -> Self;
 
+    /// Strict addition with a signed integer. Computes `self + rhs`,
+    /// panicking if overflow occurred.
+    fn strict_add_signed(self, rhs: Self::Signed) -> Self;
+
+    /// Strict subtraction with a signed integer. Computes `self - rhs`,
+    /// panicking if overflow occurred.
+    fn strict_sub_signed(self, rhs: Self::Signed) -> Self;
+
     /// Wrapping (modular) addition with a signed integer. Computes `self + rhs`, wrapping around
     /// at the boundary of the type.
     fn wrapping_add_signed(self, rhs: Self::Signed) -> Self;
@@ -113,10 +140,15 @@ macro_rules! impl_unsigned {
 
             forward! {
                 fn abs_diff(self, other: Self) -> Self;
+                fn borrowing_sub(self, rhs: Self, borrow: bool) -> (Self, bool);
+                fn carrying_add(self, rhs: Self, carry: bool) -> (Self, bool);
+                fn carrying_mul(self, rhs: Self, carry: Self) -> (Self, Self);
+                fn carrying_mul_add(self, rhs: Self, carry: Self, add: Self) -> (Self, Self);
                 fn cast_signed(self) -> Self::Signed;
                 fn checked_add_signed(self, rhs: Self::Signed) -> Option<Self>;
                 fn checked_next_multiple_of(self, rhs: Self) -> Option<Self>;
                 fn checked_next_power_of_two(self) -> Option<Self>;
+                fn checked_signed_diff(self, rhs: Self) -> Option<Self::Signed>;
                 fn checked_sub_signed(self, rhs: Self::Signed) -> Option<Self>;
                 fn div_ceil(self, rhs: Self) -> Self;
                 fn is_multiple_of(self, rhs: Self) -> bool;
@@ -127,6 +159,8 @@ macro_rules! impl_unsigned {
                 fn overflowing_sub_signed(self, rhs: Self::Signed) -> (Self, bool);
                 fn saturating_add_signed(self, rhs: Self::Signed) -> Self;
                 fn saturating_sub_signed(self, rhs: Self::Signed) -> Self;
+                fn strict_add_signed(self, rhs: Self::Signed) -> Self;
+                fn strict_sub_signed(self, rhs: Self::Signed) -> Self;
                 fn wrapping_add_signed(self, rhs: Self::Signed) -> Self;
                 fn wrapping_sub_signed(self, rhs: Self::Signed) -> Self;
             }

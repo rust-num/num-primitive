@@ -1,3 +1,11 @@
+# Release 0.3.2 (2025-12-16)
+
+- Updated to MSRV 1.91.
+- Added `PrimitiveInteger::strict_{add,div,{div,rem}_euclid,mul,neg,pow,rem,shl,shr,sub}`
+- Added `PrimitiveSigned::strict_{abs,{add,sub}_unsigned}`
+- Added `PrimitiveUnsigned::strict_{abs,{add,sub}_signed}`
+- Added `PrimitiveUnsigned::{borrowing_sub,carrying_{add,mul,mul_add},checked_signed_diff}`
+
 # Release 0.3.1 (2025-12-16)
 
 - Updated to MSRV 1.90.

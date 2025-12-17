@@ -221,7 +221,8 @@ pub trait PrimitiveInteger:
     /// occurred.
     fn checked_mul(self, rhs: Self) -> Option<Self>;
 
-    /// Checked negation. Computes -self, returning `None` if `self == MIN`.
+    /// Checked negation. Computes -self, returning `None` if `self == MIN` for signed integers,
+    /// or for any non-zero unsigned integer.
     fn checked_neg(self) -> Option<Self>;
 
     /// Checked exponentiation. Computes `self.pow(exp)`, returning `None` if overflow occurred.
@@ -366,6 +367,44 @@ pub trait PrimitiveInteger:
     /// Saturating integer subtraction. Computes `self - rhs`, saturating at the numeric bounds
     /// instead of overflowing.
     fn saturating_sub(self, rhs: Self) -> Self;
+
+    /// Strict integer addition. Computes `self + rhs`, panicking if overflow occurred.
+    fn strict_add(self, rhs: Self) -> Self;
+
+    /// Strict integer division. Computes `self / rhs`, panicking if overflow occurred.
+    fn strict_div(self, rhs: Self) -> Self;
+
+    /// Strict Euclidean division. Computes `self.div_euclid(rhs)`, panicking if overflow occurred.
+    fn strict_div_euclid(self, rhs: Self) -> Self;
+
+    /// Strict integer multiplication. Computes `self * rhs`, panicking if overflow occurred.
+    fn strict_mul(self, rhs: Self) -> Self;
+
+    /// Strict negation. Computes `-self`, panicking if `self == MIN` for signed integers,
+    /// or for any non-zero unsigned integer.
+    fn strict_neg(self) -> Self;
+
+    /// Strict exponentiation. Computes `self.pow(exp)`, panicking if overflow occurred.
+    fn strict_pow(self, exp: u32) -> Self;
+
+    /// Strict integer remainder. Computes `self % rhs`, panicking if
+    /// the division results in overflow.
+    fn strict_rem(self, rhs: Self) -> Self;
+
+    /// Strict Euclidean remainder. Computes `self.rem_euclid(rhs)`, panicking if
+    /// the division results in overflow.
+    fn strict_rem_euclid(self, rhs: Self) -> Self;
+
+    /// Strict shift left. Computes `self << rhs`, panicking if `rhs` is larger
+    /// than or equal to the number of bits in `self`.
+    fn strict_shl(self, rhs: u32) -> Self;
+
+    /// Strict shift right. Computes `self >> rhs`, panicking if `rhs` is
+    /// larger than or equal to the number of bits in `self`.
+    fn strict_shr(self, rhs: u32) -> Self;
+
+    /// Strict integer subtraction. Computes `self - rhs`, panicking if overflow occurred.
+    fn strict_sub(self, rhs: Self) -> Self;
 
     /// Reverses the byte order of the integer.
     fn swap_bytes(self) -> Self;
@@ -589,6 +628,17 @@ macro_rules! impl_integer {
                 fn saturating_mul(self, rhs: Self) -> Self;
                 fn saturating_pow(self, exp: u32) -> Self;
                 fn saturating_sub(self, rhs: Self) -> Self;
+                fn strict_add(self, rhs: Self) -> Self;
+                fn strict_div(self, rhs: Self) -> Self;
+                fn strict_div_euclid(self, rhs: Self) -> Self;
+                fn strict_mul(self, rhs: Self) -> Self;
+                fn strict_neg(self) -> Self;
+                fn strict_pow(self, exp: u32) -> Self;
+                fn strict_rem(self, rhs: Self) -> Self;
+                fn strict_rem_euclid(self, rhs: Self) -> Self;
+                fn strict_shl(self, rhs: u32) -> Self;
+                fn strict_shr(self, rhs: u32) -> Self;
+                fn strict_sub(self, rhs: Self) -> Self;
                 fn swap_bytes(self) -> Self;
                 fn to_be(self) -> Self;
                 fn to_le(self) -> Self;
