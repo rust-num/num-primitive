@@ -83,9 +83,6 @@ pub trait PrimitiveSigned: PrimitiveInteger + From<i8> + core::ops::Neg<Output =
     /// Returns true if `self` is positive and false if the number is zero or negative.
     fn is_positive(self) -> bool;
 
-    /// Calculates the middle point of `self` and `other`.
-    fn midpoint(self, other: Self) -> Self;
-
     /// Computes the absolute value of `self`. Returns a tuple of the absolute version of `self`
     /// along with a boolean indicating whether an overflow happened.
     fn overflowing_abs(self) -> (Self, bool);
@@ -154,7 +151,6 @@ macro_rules! impl_signed {
                 fn checked_sub_unsigned(self, rhs: Self::Unsigned) -> Option<Self>;
                 fn is_negative(self) -> bool;
                 fn is_positive(self) -> bool;
-                fn midpoint(self, other: Self) -> Self;
                 fn overflowing_abs(self) -> (Self, bool);
                 fn overflowing_add_unsigned(self, rhs: Self::Unsigned) -> (Self, bool);
                 fn overflowing_sub_unsigned(self, rhs: Self::Unsigned) -> (Self, bool);

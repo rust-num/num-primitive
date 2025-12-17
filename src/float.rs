@@ -218,9 +218,6 @@ pub trait PrimitiveFloat:
     /// Returns the maximum of the two numbers, ignoring NaN.
     fn max(self, other: Self) -> Self;
 
-    /// Calculates the middle point of `self` and `other`.
-    fn midpoint(self, other: Self) -> Self;
-
     /// Returns the minimum of the two numbers, ignoring NaN.
     fn min(self, other: Self) -> Self;
 
@@ -527,7 +524,6 @@ macro_rules! impl_float {
                 fn is_sign_positive(self) -> bool;
                 fn is_subnormal(self) -> bool;
                 fn max(self, other: Self) -> Self;
-                fn midpoint(self, other: Self) -> Self;
                 fn min(self, other: Self) -> Self;
                 fn next_down(self) -> Self;
                 fn next_up(self) -> Self;

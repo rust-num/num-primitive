@@ -65,9 +65,6 @@ pub trait PrimitiveUnsigned: PrimitiveInteger + From<u8> {
     /// Returns `true` if and only if `self == 2^k` for some `k`.
     fn is_power_of_two(self) -> bool;
 
-    /// Calculates the middle point of `self` and `other`.
-    fn midpoint(self, other: Self) -> Self;
-
     /// Calculates the smallest value greater than or equal to `self` that is a multiple of `rhs`.
     fn next_multiple_of(self, rhs: Self) -> Self;
 
@@ -107,7 +104,6 @@ macro_rules! impl_unsigned {
                 fn div_ceil(self, rhs: Self) -> Self;
                 fn is_multiple_of(self, rhs: Self) -> bool;
                 fn is_power_of_two(self) -> bool;
-                fn midpoint(self, other: Self) -> Self;
                 fn next_multiple_of(self, rhs: Self) -> Self;
                 fn next_power_of_two(self) -> Self;
                 fn overflowing_add_signed(self, rhs: Self::Signed) -> (Self, bool);
