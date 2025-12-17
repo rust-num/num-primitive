@@ -2,7 +2,7 @@
 
 [![crate](https://img.shields.io/crates/v/num-primitive.svg)](https://crates.io/crates/num-primitive)
 [![documentation](https://docs.rs/num-primitive/badge.svg)](https://docs.rs/num-primitive)
-[![minimum rustc 1.85](https://img.shields.io/badge/rustc-1.85+-red.svg)](https://rust-lang.github.io/rfcs/2495-min-rust-version.html)
+[![minimum rustc 1.87](https://img.shields.io/badge/rustc-1.87+-red.svg)](https://rust-lang.github.io/rfcs/2495-min-rust-version.html)
 [![build status](https://github.com/rust-num/num-primitive/workflows/CI/badge.svg)](https://github.com/rust-num/num-primitive/actions)
 
 Traits for primitive numeric types in Rust.
@@ -38,7 +38,7 @@ Add this to your `Cargo.toml`:
 
 ```toml
 [dependencies]
-num-primitive = "0.2"
+num-primitive = "0.3"
 ```
 
 ## Features
@@ -48,7 +48,7 @@ the default `std` feature. Use this in `Cargo.toml`:
 
 ```toml
 [dependencies.num-primitive]
-version = "0.2"
+version = "0.3"
 default-features = false
 ```
 
@@ -61,7 +61,7 @@ Release notes are available in [RELEASES.md](RELEASES.md).
 
 ## Compatibility
 
-The `num-primitive` crate is currently tested for Rust 1.85 and greater. This
+The `num-primitive` crate is currently tested for Rust 1.87 and greater. This
 minimum-supported Rust version (MSRV) may be increased at any time to add
 support for newly-stabilized functionality from the standard library. Changes
 will be documented prominently in the release notes.

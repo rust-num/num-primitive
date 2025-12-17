@@ -33,7 +33,7 @@
 //!
 //! ```toml
 //! [dependencies]
-//! num-primitive = "0.2"
+//! num-primitive = "0.3"
 //! ```
 //!
 //! ## Features
@@ -43,7 +43,7 @@
 //!
 //! ```toml
 //! [dependencies.num-primitive]
-//! version = "0.2"
+//! version = "0.3"
 //! default-features = false
 //! ```
 //!

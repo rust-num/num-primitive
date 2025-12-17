@@ -1,3 +1,8 @@
+# Release 0.3.0 (2025-12-16)
+
+- Added `PrimitiveNumber::midpoint`
+- Removed `Primitive{Float,Signed,Unsigned}::midpoint`
+
 # Release 0.2.3 (2025-12-16)
 
 - Updated to MSRV 1.87.
