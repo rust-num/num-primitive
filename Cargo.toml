@@ -7,7 +7,7 @@ license = "MIT OR Apache-2.0"
 keywords = ["generic", "mathematics", "numerics", "primitive"]
 categories = ["algorithms", "science", "no-std"]
 edition = "2024"
-rust-version = "1.87"
+rust-version = "1.90"
 
 [features]
 default = ["std"]
