@@ -382,6 +382,12 @@ pub trait PrimitiveInteger:
     /// Returns the number of trailing zeros in the binary representation of `self`.
     fn trailing_zeros(self) -> u32;
 
+    /// Unbounded shift left. Computes `self << rhs`, without bounding the value of `rhs`.
+    fn unbounded_shl(self, rhs: u32) -> Self;
+
+    /// Unbounded shift right. Computes `self >> rhs`, without bounding the value of `rhs`.
+    fn unbounded_shr(self, rhs: u32) -> Self;
+
     /// Wrapping (modular) addition. Computes `self + rhs`, wrapping around at the boundary of the
     /// type.
     fn wrapping_add(self, rhs: Self) -> Self;
@@ -588,6 +594,8 @@ macro_rules! impl_integer {
                 fn to_le(self) -> Self;
                 fn trailing_ones(self) -> u32;
                 fn trailing_zeros(self) -> u32;
+                fn unbounded_shl(self, rhs: u32) -> Self;
+                fn unbounded_shr(self, rhs: u32) -> Self;
                 fn wrapping_add(self, rhs: Self) -> Self;
                 fn wrapping_div(self, rhs: Self) -> Self;
                 fn wrapping_div_euclid(self, rhs: Self) -> Self;

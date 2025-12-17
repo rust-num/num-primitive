@@ -60,6 +60,9 @@ pub trait PrimitiveSigned: PrimitiveInteger + From<i8> + core::ops::Neg<Output =
     /// Computes the absolute difference between `self` and `other`.
     fn abs_diff(self, other: Self) -> Self::Unsigned;
 
+    /// Returns the bit pattern of `self` reinterpreted as an unsigned integer of the same size.
+    fn cast_unsigned(self) -> Self::Unsigned;
+
     /// Checked absolute value. Computes `self.abs()`, returning `None` if `self == MIN`.
     fn checked_abs(self) -> Option<Self>;
 
@@ -79,6 +82,9 @@ pub trait PrimitiveSigned: PrimitiveInteger + From<i8> + core::ops::Neg<Output =
 
     /// Returns true if `self` is positive and false if the number is zero or negative.
     fn is_positive(self) -> bool;
+
+    /// Calculates the middle point of `self` and `other`.
+    fn midpoint(self, other: Self) -> Self;
 
     /// Computes the absolute value of `self`. Returns a tuple of the absolute version of `self`
     /// along with a boolean indicating whether an overflow happened.
@@ -141,12 +147,14 @@ macro_rules! impl_signed {
             forward! {
                 fn abs(self) -> Self;
                 fn abs_diff(self, other: Self) -> Self::Unsigned;
+                fn cast_unsigned(self) -> Self::Unsigned;
                 fn checked_abs(self) -> Option<Self>;
                 fn checked_add_unsigned(self, rhs: Self::Unsigned) -> Option<Self>;
                 fn checked_isqrt(self) -> Option<Self>;
                 fn checked_sub_unsigned(self, rhs: Self::Unsigned) -> Option<Self>;
                 fn is_negative(self) -> bool;
                 fn is_positive(self) -> bool;
+                fn midpoint(self, other: Self) -> Self;
                 fn overflowing_abs(self) -> (Self, bool);
                 fn overflowing_add_unsigned(self, rhs: Self::Unsigned) -> (Self, bool);
                 fn overflowing_sub_unsigned(self, rhs: Self::Unsigned) -> (Self, bool);
