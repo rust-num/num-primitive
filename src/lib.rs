@@ -59,6 +59,7 @@ extern crate std;
 #[macro_use]
 mod macros;
 
+mod bytes;
 mod error;
 mod float;
 mod integer;
@@ -69,6 +70,7 @@ mod unsigned;
 #[cfg(test)]
 mod tests;
 
+pub use self::bytes::PrimitiveBytes;
 pub use self::error::PrimitiveError;
 pub use self::float::{PrimitiveFloat, PrimitiveFloatRef, PrimitiveFloatToInt};
 pub use self::integer::{PrimitiveInteger, PrimitiveIntegerRef};
