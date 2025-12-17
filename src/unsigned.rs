@@ -56,6 +56,10 @@ pub trait PrimitiveUnsigned: PrimitiveInteger + From<u8> {
     /// wrapped in Some.
     fn checked_next_power_of_two(self) -> Option<Self>;
 
+    /// Checked subtraction with a signed integer. Computes `self - rhs`,
+    /// returning `None` if overflow occurred.
+    fn checked_sub_signed(self, rhs: Self::Signed) -> Option<Self>;
+
     /// Calculates the quotient of `self` and rhs, rounding the result towards positive infinity.
     fn div_ceil(self, rhs: Self) -> Self;
 
@@ -75,13 +79,25 @@ pub trait PrimitiveUnsigned: PrimitiveInteger + From<u8> {
     /// boolean indicating whether an arithmetic overflow would occur.
     fn overflowing_add_signed(self, rhs: Self::Signed) -> (Self, bool);
 
+    /// Calculates `self` - `rhs` with a signed `rhs`. Returns a tuple of the subtraction along
+    /// with a boolean indicating whether an arithmetic overflow would occur.
+    fn overflowing_sub_signed(self, rhs: Self::Signed) -> (Self, bool);
+
     /// Saturating addition with a signed integer. Computes `self + rhs`, saturating at the numeric
     /// bounds instead of overflowing.
     fn saturating_add_signed(self, rhs: Self::Signed) -> Self;
 
+    /// Saturating integer subtraction. Computes `self` - `rhs`, saturating at
+    /// the numeric bounds instead of overflowing.
+    fn saturating_sub_signed(self, rhs: Self::Signed) -> Self;
+
     /// Wrapping (modular) addition with a signed integer. Computes `self + rhs`, wrapping around
     /// at the boundary of the type.
     fn wrapping_add_signed(self, rhs: Self::Signed) -> Self;
+
+    /// Wrapping (modular) subtraction with a signed integer. Computes
+    /// `self - rhs`, wrapping around at the boundary of the type.
+    fn wrapping_sub_signed(self, rhs: Self::Signed) -> Self;
 }
 
 /// Trait for references to primitive unsigned integer types ([`PrimitiveUnsigned`]).
@@ -101,14 +117,18 @@ macro_rules! impl_unsigned {
                 fn checked_add_signed(self, rhs: Self::Signed) -> Option<Self>;
                 fn checked_next_multiple_of(self, rhs: Self) -> Option<Self>;
                 fn checked_next_power_of_two(self) -> Option<Self>;
+                fn checked_sub_signed(self, rhs: Self::Signed) -> Option<Self>;
                 fn div_ceil(self, rhs: Self) -> Self;
                 fn is_multiple_of(self, rhs: Self) -> bool;
                 fn is_power_of_two(self) -> bool;
                 fn next_multiple_of(self, rhs: Self) -> Self;
                 fn next_power_of_two(self) -> Self;
                 fn overflowing_add_signed(self, rhs: Self::Signed) -> (Self, bool);
+                fn overflowing_sub_signed(self, rhs: Self::Signed) -> (Self, bool);
                 fn saturating_add_signed(self, rhs: Self::Signed) -> Self;
+                fn saturating_sub_signed(self, rhs: Self::Signed) -> Self;
                 fn wrapping_add_signed(self, rhs: Self::Signed) -> Self;
+                fn wrapping_sub_signed(self, rhs: Self::Signed) -> Self;
             }
         }
 

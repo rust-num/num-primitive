@@ -1,3 +1,8 @@
+# Release 0.3.1 (2025-12-16)
+
+- Updated to MSRV 1.90.
+- Added `PrimitiveUnsigned::{checked,overflowing,saturating,wrapping}_sub_signed`
+
 # Release 0.3.0 (2025-12-16)
 
 - Added `PrimitiveNumber::midpoint`
