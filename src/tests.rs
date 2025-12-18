@@ -111,3 +111,43 @@ fn try_into() {
     }
     check(0i32, 0u32);
 }
+
+// The following tests use `#![feature(min_generic_const_args)]`
+
+#[test]
+fn bytes1() {
+    // Return a value with the most significant bit set
+    fn msb<T: PrimitiveNumber>() -> T {
+        let mut bytes = [0; T::BYTES];
+        bytes[0] = 0x80;
+        T::from_be_bytes(bytes)
+    }
+
+    assert_eq!(msb::<i64>(), i64::MIN);
+    assert_eq!(msb::<u16>(), 1u16 << 15);
+    assert!(msb::<f64>().total_cmp(&-0.0).is_eq());
+}
+
+#[test]
+fn bytes2() {
+    // Return a value with all bits set
+    fn all_ones<T: PrimitiveNumber>() -> T {
+        T::from_ne_bytes(core::array::repeat(0xff))
+    }
+
+    assert_eq!(all_ones::<i32>(), -1);
+    assert_eq!(all_ones::<usize>(), usize::MAX);
+    assert!(all_ones::<f64>().is_nan());
+}
+
+#[test]
+fn bytes3() {
+    // Try different 4-byte types
+    fn rust<T: PrimitiveNumber<BYTES = 4>>() -> T {
+        T::from_be_bytes(*b"Rust")
+    }
+
+    assert_eq!(rust::<i32>(), 0x52_75_73_74_i32);
+    assert_eq!(rust::<u32>(), 0x52_75_73_74_u32);
+    assert_eq!(rust::<f32>(), f32::from_bits(0x52_75_73_74_u32));
+}
