@@ -1,3 +1,9 @@
+# Release 0.3.3 (2025-12-17)
+
+- Added `PrimitiveBytes` to consolidate the constraints on `PrimitiveNumber::Bytes`
+  - Extended with `IndexMut<usize>`, and `PartialEq` and `TryFrom` with slice refs.
+  - Added array construction methods `from_fn` and `repeat`.
+
 # Release 0.3.2 (2025-12-16)
 
 - Updated to MSRV 1.91.
