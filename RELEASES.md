@@ -1,3 +1,7 @@
+# Release 0.2.4 (2025-12-20)
+
+- Backported `PrimitiveInteger::from_str_radix` from 0.3.4.
+
 # Release 0.2.3 (2025-12-16)
 
 - Updated to MSRV 1.87.
