@@ -1,6 +1,6 @@
 [package]
 name = "num-primitive"
-version = "0.2.3"
+version = "0.2.4"
 description = "Traits for primitive numeric types"
 repository = "https://github.com/rust-num/num-primitive"
 license = "MIT OR Apache-2.0"
@@ -8,6 +8,10 @@ keywords = ["generic", "mathematics", "numerics", "primitive"]
 categories = ["algorithms", "science", "no-std"]
 edition = "2024"
 rust-version = "1.87"
+
+[package.metadata.release]
+allow-branch = ["main"]
+sign-tag = true
 
 [features]
 default = ["std"]
@@ -24,7 +28,3 @@ unreachable-pub = "deny"
 [lints.rustdoc]
 broken-intra-doc-links = "deny"
 private-intra-doc-links = "deny"
-
-[package.metadata.release]
-allow-branch = ["main"]
-sign-tag = true
