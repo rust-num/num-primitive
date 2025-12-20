@@ -1,3 +1,5 @@
+use core::num::ParseIntError;
+
 use crate::{PrimitiveError, PrimitiveNumber, PrimitiveNumberRef};
 
 /// Trait for all primitive [integer types], including the supertrait [`PrimitiveNumber`].
@@ -263,6 +265,9 @@ pub trait PrimitiveInteger:
 
     /// Converts an integer from little endian to the target's endianness.
     fn from_le(value: Self) -> Self;
+
+    /// Parses an integer from a string slice with digits in a given base.
+    fn from_str_radix(src: &str, radix: u32) -> Result<Self, ParseIntError>;
 
     /// Returns the logarithm of the number with respect to an arbitrary base, rounded down.
     fn ilog(self, base: Self) -> u32;
@@ -582,6 +587,7 @@ macro_rules! impl_integer {
             forward! {
                 fn from_be(value: Self) -> Self;
                 fn from_le(value: Self) -> Self;
+                fn from_str_radix(src: &str, radix: u32) -> Result<Self, ParseIntError>;
             }
             forward! {
                 fn checked_add(self, rhs: Self) -> Option<Self>;
