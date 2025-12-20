@@ -28,6 +28,10 @@
 - Added `PrimitiveNumber::midpoint`
 - Removed `Primitive{Float,Signed,Unsigned}::midpoint`
 
+# Release 0.2.4 (2025-12-20)
+
+- Backported `PrimitiveInteger::from_str_radix` from 0.3.4.
+
 # Release 0.2.3 (2025-12-16)
 
 - Updated to MSRV 1.87.
@@ -50,6 +54,10 @@
   However, `PrimitiveFloatToInt` lost its supertrait `PrimitiveFloat` in kind.
 - `PrimitiveNumber` added type-casting methods `as_from` and `as_to`.
 - `PrimitiveNumber::Bytes` added supertraits for its array representation.
+
+# Release 0.1.2 (2025-12-20)
+
+- Backported `PrimitiveInteger::from_str_radix` from 0.3.4.
 
 # Release 0.1.1 (2025-12-11)
 
