@@ -1,4 +1,4 @@
-use crate::{PrimitiveBytes, PrimitiveError};
+use crate::PrimitiveError;
 
 trait Sealed {}
 struct SealedToken;
@@ -100,30 +100,31 @@ pub trait PrimitiveNumber:
     + for<'a> core::ops::Sub<&'a Self, Output = Self>
     + for<'a> core::ops::SubAssign<&'a Self>
 {
-    /// An array of bytes used by methods like [`from_be_bytes`][Self::from_be_bytes] and
-    /// [`to_be_bytes`][Self::to_be_bytes]. It is effectively `[u8; size_of::<Self>()]`.
-    type Bytes: PrimitiveBytes;
+    /// The number of bytes used by methods like [`from_be_bytes`][Self::from_be_bytes] and
+    /// [`to_be_bytes`][Self::to_be_bytes]. It is effectively `size_of::<Self>()`.
+    #[type_const]
+    const BYTES: usize;
 
     /// Creates a number from its representation as a byte array in big endian.
-    fn from_be_bytes(bytes: Self::Bytes) -> Self;
+    fn from_be_bytes(bytes: [u8; Self::BYTES]) -> Self;
 
     /// Creates a number from its representation as a byte array in little endian.
-    fn from_le_bytes(bytes: Self::Bytes) -> Self;
+    fn from_le_bytes(bytes: [u8; Self::BYTES]) -> Self;
 
     /// Creates a number from its representation as a byte array in native endian.
-    fn from_ne_bytes(bytes: Self::Bytes) -> Self;
+    fn from_ne_bytes(bytes: [u8; Self::BYTES]) -> Self;
 
     /// Calculates the midpoint (average) between `self` and `other`.
     fn midpoint(self, other: Self) -> Self;
 
     /// Returns the memory representation of this number as a byte array in little-endian order.
-    fn to_be_bytes(self) -> Self::Bytes;
+    fn to_be_bytes(self) -> [u8; Self::BYTES];
 
     /// Returns the memory representation of this number as a byte array in big-endian order.
-    fn to_le_bytes(self) -> Self::Bytes;
+    fn to_le_bytes(self) -> [u8; Self::BYTES];
 
     /// Returns the memory representation of this number as a byte array in native-endian order.
-    fn to_ne_bytes(self) -> Self::Bytes;
+    fn to_ne_bytes(self) -> [u8; Self::BYTES];
 
     /// Creates a number using a type cast, `value as Self`.
     ///
@@ -251,18 +252,19 @@ macro_rules! impl_primitive {
         impl Sealed for &$Number {}
 
         impl PrimitiveNumber for $Number {
-            type Bytes = [u8; size_of::<Self>()];
+            #[type_const]
+            const BYTES: usize = const { size_of::<Self>() };
 
             forward! {
-                fn from_be_bytes(bytes: Self::Bytes) -> Self;
-                fn from_le_bytes(bytes: Self::Bytes) -> Self;
-                fn from_ne_bytes(bytes: Self::Bytes) -> Self;
+                fn from_be_bytes(bytes: [u8; Self::BYTES]) -> Self;
+                fn from_le_bytes(bytes: [u8; Self::BYTES]) -> Self;
+                fn from_ne_bytes(bytes: [u8; Self::BYTES]) -> Self;
             }
             forward! {
                 fn midpoint(self, other: Self) -> Self;
-                fn to_be_bytes(self) -> Self::Bytes;
-                fn to_le_bytes(self) -> Self::Bytes;
-                fn to_ne_bytes(self) -> Self::Bytes;
+                fn to_be_bytes(self) -> [u8; Self::BYTES];
+                fn to_le_bytes(self) -> [u8; Self::BYTES];
+                fn to_ne_bytes(self) -> [u8; Self::BYTES];
             }
         }
 

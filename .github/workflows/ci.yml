@@ -12,9 +12,9 @@ jobs:
     strategy:
       matrix:
         rust: [
-          1.91.0, # MSRV
-          stable,
-          beta,
+          # 1.91.0, # MSRV
+          # stable,
+          # beta,
           nightly,
         ]
     steps:
@@ -32,7 +32,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: dtolnay/rust-toolchain@stable
+      # - uses: dtolnay/rust-toolchain@stable
+      - uses: dtolnay/rust-toolchain@nightly
         with:
           # try a target that doesn't have std at all
           target: thumbv6m-none-eabi
@@ -42,7 +43,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: dtolnay/rust-toolchain@stable
+      # - uses: dtolnay/rust-toolchain@stable
+      - uses: dtolnay/rust-toolchain@nightly
         with:
           components: clippy
       - run: cargo clippy --all-features
