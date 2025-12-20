@@ -128,6 +128,7 @@ pub trait PrimitiveInteger:
     + core::ops::ShrAssign<u64>
     + core::ops::ShrAssign<u128>
     + core::ops::ShrAssign<usize>
+    + core::str::FromStr<Err = ParseIntError>
     + for<'a> core::ops::BitAnd<&'a Self, Output = Self>
     + for<'a> core::ops::BitAndAssign<&'a Self>
     + for<'a> core::ops::BitOr<&'a Self, Output = Self>

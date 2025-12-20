@@ -15,9 +15,14 @@
 extern crate alloc;
 
 use alloc::boxed::Box;
+use core::convert::Infallible;
 use core::error::Error;
+use core::num::{ParseFloatError, ParseIntError};
 
-use crate::{PrimitiveError, PrimitiveInteger, PrimitiveNumber};
+use crate::{
+    PrimitiveError, PrimitiveFloat, PrimitiveInteger, PrimitiveNumber, PrimitiveSigned,
+    PrimitiveUnsigned,
+};
 
 fn check_result<'a, T: PrimitiveNumber, E: PrimitiveError>(r: Result<T, E>, ok: T) {
     // Cloning and equating results requires `E: Clone + PartialEq`
@@ -37,6 +42,8 @@ fn check_result<'a, T: PrimitiveNumber, E: PrimitiveError>(r: Result<T, E>, ok: 
 
 #[test]
 fn parse() {
+    // `PrimitiveNumber` is not specific about the `FromStr` error type,
+    // only constraining that it implements `PrimitiveError`.
     fn check<T: PrimitiveNumber>(s: &str, ok: T) {
         check_result(s.parse(), ok);
     }
@@ -44,7 +51,29 @@ fn parse() {
 }
 
 #[test]
+fn parse_float() {
+    // `PrimitiveFloat` is specific about the `FromStr` error type.
+    fn check<T: PrimitiveFloat>(s: &str, ok: T) {
+        let r: Result<T, ParseFloatError> = s.parse();
+        assert_eq!(r, Ok(ok));
+    }
+    check("0", 0f32);
+}
+
+#[test]
+fn parse_int() {
+    // `PrimitiveInteger` is specific about the `FromStr` error type.
+    fn check<T: PrimitiveInteger>(s: &str, ok: T) {
+        let r: Result<T, ParseIntError> = s.parse();
+        assert_eq!(r, Ok(ok));
+    }
+    check("0", 0u32);
+}
+
+#[test]
 fn try_from() {
+    // `PrimitiveInteger` is not specific about the `TryFrom` error type,
+    // only constraining that it implements `PrimitiveError`.
     fn check<T: PrimitiveInteger>(x: i32, ok: T) {
         check_result(T::try_from(x), ok);
     }
@@ -52,7 +81,31 @@ fn try_from() {
 }
 
 #[test]
+fn try_from_signed() {
+    // `PrimitiveSigned` is specific that `TryFrom<i8>` is infallible.
+    // (implied by `From<i8>`, but we still need an explicit constraint)
+    fn check<T: PrimitiveSigned>(x: i8, ok: T) {
+        let r: Result<T, Infallible> = T::try_from(x);
+        assert_eq!(r, Ok(ok));
+    }
+    check(0i8, 0i32);
+}
+
+#[test]
+fn try_from_unsigned() {
+    // `PrimitiveUnsigned` is specific that `TryFrom<u8>` is infallible.
+    // (implied by `From<u8>`, but we still need an explicit constraint)
+    fn check<T: PrimitiveUnsigned>(x: u8, ok: T) {
+        let r: Result<T, Infallible> = T::try_from(x);
+        assert_eq!(r, Ok(ok));
+    }
+    check(0u8, 0u32);
+}
+
+#[test]
 fn try_into() {
+    // `PrimitiveInteger` is not specific about the `TryInto` error type,
+    // only constraining that it implements `PrimitiveError`.
     fn check<T: PrimitiveInteger>(x: T, ok: u32) {
         check_result(x.try_into(), ok);
     }
