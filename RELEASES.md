@@ -1,3 +1,9 @@
+# Release 0.3.4 (2025-12-20)
+
+- Added `PrimitiveInteger::from_str_radix`.
+- Specified error types in `PrimitiveInteger: FromStr`, `PrimitiveSigned: TryFrom<i8>`,
+  and `PrimitiveUnsigned: TryFrom<u8>`.
+
 # Release 0.3.3 (2025-12-17)
 
 - Added `PrimitiveBytes` to consolidate the constraints on `PrimitiveNumber::Bytes`
