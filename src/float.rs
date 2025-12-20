@@ -3,7 +3,7 @@ use crate::{PrimitiveNumber, PrimitiveNumberRef, PrimitiveUnsigned};
 use core::cmp::Ordering;
 use core::f32::consts as f32_consts;
 use core::f64::consts as f64_consts;
-use core::num::FpCategory;
+use core::num::{FpCategory, ParseFloatError};
 
 struct SealedToken;
 
@@ -70,6 +70,7 @@ pub trait PrimitiveFloat:
     + core::convert::From<i8>
     + core::convert::From<u8>
     + core::ops::Neg<Output = Self>
+    + core::str::FromStr<Err = ParseFloatError>
 {
     /// Approximate number of significant digits in base 10.
     const DIGITS: u32;

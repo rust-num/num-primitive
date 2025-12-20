@@ -1,3 +1,5 @@
+use core::convert::Infallible;
+
 use crate::{PrimitiveInteger, PrimitiveIntegerRef, PrimitiveUnsigned};
 
 /// Trait for all primitive [signed integer types], including the supertraits [`PrimitiveInteger`]
@@ -49,7 +51,12 @@ use crate::{PrimitiveInteger, PrimitiveIntegerRef, PrimitiveUnsigned};
 /// assert_eq!(extended_gcd::<i16>(1071, -462), (21, -3, -7));
 /// assert_eq!(extended_gcd::<i64>(6_700_417, 2_147_483_647), (1, 715_828_096, -2_233_473));
 /// ```
-pub trait PrimitiveSigned: PrimitiveInteger + From<i8> + core::ops::Neg<Output = Self> {
+pub trait PrimitiveSigned:
+    PrimitiveInteger
+    + core::convert::From<i8>
+    + core::convert::TryFrom<i8, Error = Infallible>
+    + core::ops::Neg<Output = Self>
+{
     /// The unsigned integer type used by methods like [`abs_diff`][Self::abs_diff] and
     /// [`checked_add_unsigned`][Self::checked_add_unsigned].
     type Unsigned: PrimitiveUnsigned;
