@@ -119,6 +119,9 @@ pub trait PrimitiveFloat:
     /// Euler's number (e)
     const E: Self;
 
+    /// The Euler-Mascheroni constant (γ)
+    const EULER_GAMMA: Self;
+
     /// 1/π
     const FRAC_1_PI: Self;
 
@@ -145,6 +148,9 @@ pub trait PrimitiveFloat:
 
     /// π/8
     const FRAC_PI_8: Self;
+
+    /// The golden ratio (φ)
+    const GOLDEN_RATIO: Self;
 
     /// ln(2)
     const LN_2: Self;
@@ -487,6 +493,7 @@ macro_rules! impl_float {
 
             use_consts!($consts::{
                 E: Self,
+                EULER_GAMMA: Self,
                 FRAC_1_PI: Self,
                 FRAC_1_SQRT_2: Self,
                 FRAC_2_PI: Self,
@@ -496,6 +503,7 @@ macro_rules! impl_float {
                 FRAC_PI_4: Self,
                 FRAC_PI_6: Self,
                 FRAC_PI_8: Self,
+                GOLDEN_RATIO: Self,
                 LN_2: Self,
                 LN_10: Self,
                 LOG2_10: Self,
