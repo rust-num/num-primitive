@@ -1,3 +1,8 @@
+# Release 0.3.7 (2026-03-15)
+
+- Updated to MSRV 1.94.
+- Added `PrimitiveFloat::{EULER_GAMMA, GOLDEN_RATIO}`.
+
 # Release 0.3.6 (2026-01-26)
 
 - Link `const` documentation to the standard library.
