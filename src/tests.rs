@@ -111,3 +111,37 @@ fn try_into() {
     }
     check(0i32, 0u32);
 }
+
+#[test]
+fn constants() {
+    fn check<T: PrimitiveNumber>() {
+        for (i, c) in T::CONST.into_iter().enumerate() {
+            assert_eq!(T::as_from(i), c);
+            assert_eq!(i, c.as_to());
+        }
+        // explicitly const context
+        assert_eq!(T::as_from(0i32), const { T::CONST[0] });
+        assert_eq!(T::as_from(1i32), const { T::CONST[1] });
+        assert_eq!(T::as_from(42i32), const { T::CONST[42] });
+    }
+    check::<f32>();
+    check::<f64>();
+    check::<i8>();
+    check::<i16>();
+    check::<i32>();
+    check::<i64>();
+    check::<i128>();
+    check::<isize>();
+    check::<u8>();
+    check::<u16>();
+    check::<u32>();
+    check::<u64>();
+    check::<u128>();
+    check::<usize>();
+}
+
+#[test]
+fn constant_float_zero() {
+    assert!(<f32 as PrimitiveNumber>::CONST[0].is_sign_positive());
+    assert!(<f64 as PrimitiveNumber>::CONST[0].is_sign_positive());
+}

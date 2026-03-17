@@ -100,6 +100,19 @@ pub trait PrimitiveNumber:
     + for<'a> core::ops::Sub<&'a Self, Output = Self>
     + for<'a> core::ops::SubAssign<&'a Self>
 {
+    /// Constant values `0..=127` in this type.
+    ///
+    /// Since [literal expressions] can't be used for generic types, this constant array provides
+    /// an alternative way to access particular values. It contains the complete set of numbers
+    /// that all primitive numeric types have in common, where `CONST[i]` equals the index `i`
+    /// converted to `Self`.
+    ///
+    /// For floating-point types with signed zeros, `-0.0` and `+0.0`, `CONST[0]` is the positive
+    /// value.
+    ///
+    /// [literal expressions]: https://doc.rust-lang.org/reference/expressions/literal-expr.html
+    const CONST: [Self; 128];
+
     /// An array of bytes used by methods like [`from_be_bytes`][Self::from_be_bytes] and
     /// [`to_be_bytes`][Self::to_be_bytes]. It is effectively `[u8; size_of::<Self>()]`.
     type Bytes: PrimitiveBytes;
@@ -251,6 +264,17 @@ macro_rules! impl_primitive {
         impl Sealed for &$Number {}
 
         impl PrimitiveNumber for $Number {
+            const CONST: [Self; 128] = const {
+                let mut constants = [0 as Self; 128];
+                let mut i = 1;
+                while i < 128 {
+                    constants[i] = i as Self;
+                    assert!(constants[i] as usize == i);
+                    i += 1;
+                }
+                constants
+            };
+
             type Bytes = [u8; size_of::<Self>()];
 
             forward! {
