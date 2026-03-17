@@ -111,6 +111,23 @@ pub trait PrimitiveNumber:
     /// value.
     ///
     /// [literal expressions]: https://doc.rust-lang.org/reference/expressions/literal-expr.html
+    ///
+    /// # Examples
+    ///
+    /// [Milü](https://en.wikipedia.org/wiki/Mil%C3%BC) is an approximation of π as the ratio
+    /// `355 / 113`, which can also be written as `3 + 16 / 113`.
+    ///
+    /// ```
+    /// use num_primitive::{PrimitiveFloat, PrimitiveNumber};
+    ///
+    /// fn milu<T: PrimitiveNumber>() -> T {
+    ///     T::CONST[3] + T::CONST[16] / T::CONST[113]
+    /// }
+    ///
+    /// assert!((milu::<f64>() - f64::PI).abs() < 1e-6);
+    /// assert!((milu::<f32>() - f32::PI).abs() < 1e-6);
+    /// assert_eq!(milu::<i8>(), 3);
+    /// ```
     const CONST: [Self; 128];
 
     /// An array of bytes used by methods like [`from_be_bytes`][Self::from_be_bytes] and
