@@ -1,8 +1,8 @@
 # num-primitive
 
 [![crate](https://img.shields.io/crates/v/num-primitive.svg)](https://crates.io/crates/num-primitive)
+[![minimum rust 1.94](https://img.shields.io/badge/rust-1.94+-blue.svg)](https://rust-lang.github.io/rfcs/2495-min-rust-version.html)
 [![documentation](https://docs.rs/num-primitive/badge.svg)](https://docs.rs/num-primitive)
-[![minimum rustc 1.93](https://img.shields.io/badge/rustc-1.93+-red.svg)](https://rust-lang.github.io/rfcs/2495-min-rust-version.html)
 [![build status](https://github.com/rust-num/num-primitive/workflows/CI/badge.svg)](https://github.com/rust-num/num-primitive/actions)
 
 Traits for primitive numeric types in Rust.
