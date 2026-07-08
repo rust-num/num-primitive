@@ -280,6 +280,9 @@ pub trait PrimitiveInteger:
     /// Parses an integer from a string slice with digits in a given base.
     fn from_str_radix(src: &str, radix: u32) -> Result<Self, ParseIntError>;
 
+    /// Returns the index of the highest bit set to one in `self`, or `None` if `self` is `0`.
+    fn highest_one(self) -> Option<u32>;
+
     /// Returns the logarithm of the number with respect to an arbitrary base, rounded down.
     fn ilog(self, base: Self) -> u32;
 
@@ -289,6 +292,12 @@ pub trait PrimitiveInteger:
     /// Returns the base 2 logarithm of the number, rounded down.
     fn ilog2(self) -> u32;
 
+    /// Returns `self` with only the most significant bit set, or `0` if the input is `0`.
+    fn isolate_highest_one(self) -> Self;
+
+    /// Returns `self` with only the least significant bit set, or `0` if the input is `0`.
+    fn isolate_lowest_one(self) -> Self;
+
     /// Returns the square root of the number, rounded down.
     fn isqrt(self) -> Self;
 
@@ -297,6 +306,9 @@ pub trait PrimitiveInteger:
 
     /// Returns the number of leading zeros in the binary representation of `self`.
     fn leading_zeros(self) -> u32;
+
+    /// Returns the index of the lowest bit set to one in `self`, or `None` if `self` is `0`.
+    fn lowest_one(self) -> Option<u32>;
 
     /// Calculates `self + rhs`. Returns a tuple of the addition along with a boolean indicating
     /// whether an arithmetic overflow would occur.
@@ -707,8 +719,20 @@ pub trait NonZeroPrimitiveInteger:
     /// Returns the contained value as a primitive type.
     fn get(self) -> Self::Integer;
 
+    /// Returns the index of the highest bit set to one in `self`.
+    fn highest_one(self) -> u32;
+
+    /// Returns `self` with only the most significant bit set.
+    fn isolate_highest_one(self) -> Self;
+
+    /// Returns `self` with only the least significant bit set.
+    fn isolate_lowest_one(self) -> Self;
+
     /// Returns the number of leading zeros in the binary representation of `self`.
     fn leading_zeros(self) -> u32;
+
+    /// Returns the index of the lowest bit set to one in `self`.
+    fn lowest_one(self) -> u32;
 
     /// Creates a non-zero if the given value is not zero.
     fn new(n: Self::Integer) -> Option<Self>;
@@ -767,12 +791,16 @@ macro_rules! impl_integer {
                 fn count_ones(self) -> u32;
                 fn count_zeros(self) -> u32;
                 fn div_euclid(self, rhs: Self) -> Self;
+                fn highest_one(self) -> Option<u32>;
                 fn ilog(self, base: Self) -> u32;
                 fn ilog10(self) -> u32;
                 fn ilog2(self) -> u32;
+                fn isolate_highest_one(self) -> Self;
+                fn isolate_lowest_one(self) -> Self;
                 fn isqrt(self) -> Self;
                 fn leading_ones(self) -> u32;
                 fn leading_zeros(self) -> u32;
+                fn lowest_one(self) -> Option<u32>;
                 fn overflowing_add(self, rhs: Self) -> (Self, bool);
                 fn overflowing_div(self, rhs: Self) -> (Self, bool);
                 fn overflowing_div_euclid(self, rhs: Self) -> (Self, bool);
@@ -854,7 +882,11 @@ macro_rules! impl_integer {
                 fn checked_pow(self, other: u32) -> Option<Self>;
                 fn count_ones(self) -> NonZero<u32>;
                 fn get(self) -> Self::Integer;
+                fn highest_one(self) -> u32;
+                fn isolate_highest_one(self) -> Self;
+                fn isolate_lowest_one(self) -> Self;
                 fn leading_zeros(self) -> u32;
+                fn lowest_one(self) -> u32;
                 fn saturating_mul(self, other: Self) -> Self;
                 fn saturating_pow(self, other: u32) -> Self;
                 fn trailing_zeros(self) -> u32;

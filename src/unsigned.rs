@@ -54,6 +54,10 @@ pub trait PrimitiveUnsigned:
     /// Computes the absolute difference between `self` and `other`.
     fn abs_diff(self, other: Self) -> Self;
 
+    /// Returns the minimum number of bits required to represent `self`.
+    /// This method returns zero if `self` is zero.
+    fn bit_width(self) -> u32;
+
     /// Calculates `self` &minus; `rhs` &minus; `borrow` and returns a tuple
     /// containing the difference and the output borrow.
     fn borrowing_sub(self, rhs: Self, borrow: bool) -> (Self, bool);
@@ -185,6 +189,9 @@ pub trait NonZeroPrimitiveUnsigned:
     /// For `core::num::NonZero<T>`, this is `NonZero<T::Signed>`.
     type NonZeroSigned: NonZeroPrimitiveSigned;
 
+    /// Returns the minimum number of bits required to represent `self`.
+    fn bit_width(self) -> NonZero<u32>;
+
     /// Returns the bit pattern of `self` reinterpreted as a signed integer of the same size.
     fn cast_signed(self) -> Self::NonZeroSigned;
 
@@ -224,6 +231,7 @@ macro_rules! impl_unsigned {
 
             forward! {
                 fn abs_diff(self, other: Self) -> Self;
+                fn bit_width(self) -> u32;
                 fn borrowing_sub(self, rhs: Self, borrow: bool) -> (Self, bool);
                 fn carrying_add(self, rhs: Self, carry: bool) -> (Self, bool);
                 fn carrying_mul(self, rhs: Self, carry: Self) -> (Self, Self);
@@ -256,6 +264,7 @@ macro_rules! impl_unsigned {
             type NonZeroSigned = NonZero<$Signed>;
 
             forward! {
+                fn bit_width(self) -> NonZero<u32>;
                 fn cast_signed(self) -> Self::NonZeroSigned;
                 fn checked_add(self, other: Self::Integer) -> Option<Self>;
                 fn checked_next_power_of_two(self) -> Option<Self>;
