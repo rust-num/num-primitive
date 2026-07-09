@@ -1,6 +1,10 @@
 use core::convert::Infallible;
+use core::num::NonZero;
 
-use crate::{PrimitiveInteger, PrimitiveIntegerRef, PrimitiveSigned};
+use crate::{
+    NonZeroPrimitiveInteger, NonZeroPrimitiveSigned, PrimitiveInteger, PrimitiveIntegerRef,
+    PrimitiveSigned,
+};
 
 /// Trait for all primitive [unsigned integer types], including the supertraits
 /// [`PrimitiveInteger`] and [`PrimitiveNumber`][crate::PrimitiveNumber].
@@ -34,7 +38,15 @@ use crate::{PrimitiveInteger, PrimitiveIntegerRef, PrimitiveSigned};
 /// assert_eq!(gcd::<u16>(1071, 462), 21);
 /// assert_eq!(gcd::<u32>(6_700_417, 2_147_483_647), 1);
 /// ```
-pub trait PrimitiveUnsigned: PrimitiveInteger + From<u8> + TryFrom<u8, Error = Infallible> {
+pub trait PrimitiveUnsigned:
+    PrimitiveInteger
+    + core::convert::From<u8>
+    + core::convert::TryFrom<u8, Error = Infallible>
+    + core::ops::Div<Self::NonZero, Output = Self>
+    + core::ops::DivAssign<Self::NonZero>
+    + core::ops::Rem<Self::NonZero, Output = Self>
+    + core::ops::RemAssign<Self::NonZero>
+{
     /// The signed integer type used by methods like
     /// [`checked_add_signed`][Self::checked_add_signed].
     type Signed: PrimitiveSigned;
@@ -135,6 +147,76 @@ pub trait PrimitiveUnsigned: PrimitiveInteger + From<u8> + TryFrom<u8, Error = I
 /// e.g. `where &T: PrimitiveUnsignedRef<T>`.
 pub trait PrimitiveUnsignedRef<T>: PrimitiveIntegerRef<T> {}
 
+/// Trait for [`NonZero`] primitive unsigned integers, including the supertrait
+/// [`NonZeroPrimitiveInteger`].
+///
+/// This encapsulates trait implementations and inherent methods that are common among all of the
+/// implementations of `NonZero<T>`, where `T` is a [`PrimitiveUnsigned`].
+///
+/// See the corresponding items on the individual types for more documentation and examples.
+///
+/// This trait is sealed with a private trait to prevent downstream implementations, so we may
+/// continue to expand along with the standard library without worrying about breaking changes for
+/// implementors.
+///
+/// # Examples
+///
+/// ```
+/// use num_primitive::NonZeroPrimitiveUnsigned;
+/// use core::num::NonZero;
+///
+/// fn gcd<T: NonZeroPrimitiveUnsigned>(mut a: T, mut b: T) -> T {
+///     while let Some(r) = T::new(b.get() % a) {
+///         (a, b) = (r, a);
+///     }
+///     a
+/// }
+///
+/// let a = NonZero::new(48u32).unwrap();
+/// let b = NonZero::new(18u32).unwrap();
+/// assert_eq!(gcd(a, b).get(), 6);
+/// ```
+pub trait NonZeroPrimitiveUnsigned:
+    NonZeroPrimitiveInteger<Integer: PrimitiveUnsigned> + core::convert::From<NonZero<u8>>
+{
+    /// The signed non-zero integer type used by methods like
+    /// [`cast_signed`][Self::cast_signed].
+    ///
+    /// For `core::num::NonZero<T>`, this is `NonZero<T::Signed>`.
+    type NonZeroSigned: NonZeroPrimitiveSigned;
+
+    /// Returns the bit pattern of `self` reinterpreted as a signed integer of the same size.
+    fn cast_signed(self) -> Self::NonZeroSigned;
+
+    /// Adds an unsigned integer to a non-zero value. Returns [`None`] on overflow.
+    fn checked_add(self, other: Self::Integer) -> Option<Self>;
+
+    /// Returns the smallest power of two greater than or equal to `self`. Checks for overflow and
+    /// returns [`None`] if the next power of two is greater than the type’s maximum value.
+    fn checked_next_power_of_two(self) -> Option<Self>;
+
+    /// Calculates the quotient of `self` and `rhs`, rounding the result towards positive infinity.
+    fn div_ceil(self, rhs: Self) -> Self;
+
+    /// Returns the base 10 logarithm of the number, rounded down.
+    fn ilog10(self) -> u32;
+
+    /// Returns the base 2 logarithm of the number, rounded down.
+    fn ilog2(self) -> u32;
+
+    /// Returns `true` if and only if `self == (1 << k)` for some `k`.
+    fn is_power_of_two(self) -> bool;
+
+    /// Returns the square root of the number, rounded down.
+    fn isqrt(self) -> Self;
+
+    /// Calculates the midpoint (average) between `self` and `rhs`.
+    fn midpoint(self, rhs: Self) -> Self;
+
+    /// Adds an unsigned integer to a non-zero value. Returns `Self::MAX` on overflow.
+    fn saturating_add(self, other: Self::Integer) -> Self;
+}
+
 macro_rules! impl_unsigned {
     ($Unsigned:ident, $Signed:ty) => {
         impl PrimitiveUnsigned for $Unsigned {
@@ -169,6 +251,23 @@ macro_rules! impl_unsigned {
         }
 
         impl PrimitiveUnsignedRef<$Unsigned> for &$Unsigned {}
+
+        impl NonZeroPrimitiveUnsigned for NonZero<$Unsigned> {
+            type NonZeroSigned = NonZero<$Signed>;
+
+            forward! {
+                fn cast_signed(self) -> Self::NonZeroSigned;
+                fn checked_add(self, other: Self::Integer) -> Option<Self>;
+                fn checked_next_power_of_two(self) -> Option<Self>;
+                fn div_ceil(self, rhs: Self) -> Self;
+                fn ilog10(self) -> u32;
+                fn ilog2(self) -> u32;
+                fn is_power_of_two(self) -> bool;
+                fn isqrt(self) -> Self;
+                fn midpoint(self, rhs: Self) -> Self;
+                fn saturating_add(self, other: Self::Integer) -> Self;
+            }
+        }
     };
 }
 

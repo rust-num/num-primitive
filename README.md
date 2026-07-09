@@ -20,6 +20,9 @@ Each trait includes supertraits for everything implemented in common by these
 types, as well as associated constants and methods matching their inherent
 items. `PrimitiveFloat` also adds the contents of `core::{float}::consts`.
 
+`NonZero` integer wrappers are similarly supported by `NonZeroPrimitiveInteger`,
+`NonZeroPrimitiveSigned`, and `NonZeroPrimitiveUnsigned`.
+
 It is not a goal of this crate to *add* any functionality to the primitive
 types, only to expose what is already available in the standard library in a
 more generic way. The traits are also [sealed] against downstream

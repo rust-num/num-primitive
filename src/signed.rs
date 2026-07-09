@@ -1,6 +1,10 @@
 use core::convert::Infallible;
+use core::num::NonZero;
 
-use crate::{PrimitiveInteger, PrimitiveIntegerRef, PrimitiveUnsigned};
+use crate::{
+    NonZeroPrimitiveInteger, NonZeroPrimitiveUnsigned, PrimitiveInteger, PrimitiveIntegerRef,
+    PrimitiveUnsigned,
+};
 
 /// Trait for all primitive [signed integer types], including the supertraits [`PrimitiveInteger`]
 /// and [`PrimitiveNumber`][crate::PrimitiveNumber].
@@ -162,6 +166,87 @@ pub trait PrimitiveSigned:
 /// e.g. `where &T: PrimitiveSignedRef<T>`.
 pub trait PrimitiveSignedRef<T>: PrimitiveIntegerRef<T> + core::ops::Neg<Output = T> {}
 
+/// Trait for [`NonZero`] primitive signed integers, including the supertrait
+/// [`NonZeroPrimitiveInteger`].
+///
+/// This encapsulates trait implementations and inherent methods that are common among all of the
+/// implementations of `NonZero<T>`, where `T` is a [`PrimitiveSigned`].
+///
+/// See the corresponding items on the individual types for more documentation and examples.
+///
+/// This trait is sealed with a private trait to prevent downstream implementations, so we may
+/// continue to expand along with the standard library without worrying about breaking changes for
+/// implementors.
+///
+/// # Examples
+///
+/// ```
+/// use num_primitive::NonZeroPrimitiveSigned;
+/// use core::num::NonZero;
+///
+/// fn sign_and_magnitude<T: NonZeroPrimitiveSigned>(n: T) -> (bool, T::NonZeroUnsigned) {
+///     (n.is_negative(), n.unsigned_abs())
+/// }
+///
+/// let n = NonZero::new(-42i16).unwrap();
+/// assert_eq!(sign_and_magnitude(n), (true, NonZero::new(42u16).unwrap()));
+/// ```
+pub trait NonZeroPrimitiveSigned:
+    NonZeroPrimitiveInteger<Integer: PrimitiveSigned>
+    + core::convert::From<NonZero<i8>>
+    + core::ops::Neg<Output = Self>
+{
+    /// The unsigned non-zero integer type used by methods like
+    /// [`cast_unsigned`][Self::cast_unsigned].
+    ///
+    /// For `core::num::NonZero<T>`, this is `NonZero<T::Unsigned>`.
+    type NonZeroUnsigned: NonZeroPrimitiveUnsigned;
+
+    /// Computes the absolute value of self.
+    fn abs(self) -> Self;
+
+    /// Returns the bit pattern of `self` reinterpreted as an unsigned integer of the same size.
+    fn cast_unsigned(self) -> Self::NonZeroUnsigned;
+
+    /// Checked absolute value. Checks for overflow and returns [`None`] if `self == Self::MIN`.
+    fn checked_abs(self) -> Option<Self>;
+
+    /// Checked negation. Computes `-self`, returning `None` if `self == Self::MIN`.
+    fn checked_neg(self) -> Option<Self>;
+
+    /// Returns `true` if `self` is positive and `false` if the number is negative.
+    fn is_positive(self) -> bool;
+
+    /// Returns `true` if `self` is negative and `false` if the number is positive.
+    fn is_negative(self) -> bool;
+
+    /// Computes the absolute value of self, with overflow information.
+    fn overflowing_abs(self) -> (Self, bool);
+
+    /// Negates self, overflowing if this is equal to the minimum value.
+    fn overflowing_neg(self) -> (Self, bool);
+
+    /// Saturating absolute value.
+    fn saturating_abs(self) -> Self;
+
+    /// Saturating negation. Computes `-self`, returning `Self::MAX`
+    /// if `self == Self::MIN` instead of overflowing.
+    fn saturating_neg(self) -> Self;
+
+    /// Computes the absolute value of self without any wrapping or panicking.
+    fn unsigned_abs(self) -> Self::NonZeroUnsigned;
+
+    /// Wrapping absolute value.
+    fn wrapping_abs(self) -> Self;
+
+    /// Wrapping (modular) negation. Computes `-self`, wrapping around at the boundary
+    /// of the type.
+    fn wrapping_neg(self) -> Self;
+}
+
+// TODO: consider a NonZero*Ref hierarchy, including Neg here.
+// pub trait NonZeroPrimitiveSignedRef<NZ>: core::ops::Neg<Output = NZ> {}
+
 macro_rules! impl_signed {
     ($Signed:ident, $Unsigned:ty) => {
         impl PrimitiveSigned for $Signed {
@@ -199,6 +284,26 @@ macro_rules! impl_signed {
         }
 
         impl PrimitiveSignedRef<$Signed> for &$Signed {}
+
+        impl NonZeroPrimitiveSigned for NonZero<$Signed> {
+            type NonZeroUnsigned = NonZero<$Unsigned>;
+
+            forward! {
+                fn abs(self) -> Self;
+                fn cast_unsigned(self) -> Self::NonZeroUnsigned;
+                fn checked_abs(self) -> Option<Self>;
+                fn checked_neg(self) -> Option<Self>;
+                fn is_negative(self) -> bool;
+                fn is_positive(self) -> bool;
+                fn overflowing_abs(self) -> (Self, bool);
+                fn overflowing_neg(self) -> (Self, bool);
+                fn saturating_abs(self) -> Self;
+                fn saturating_neg(self) -> Self;
+                fn unsigned_abs(self) -> Self::NonZeroUnsigned;
+                fn wrapping_abs(self) -> Self;
+                fn wrapping_neg(self) -> Self;
+            }
+        }
     };
 }
 

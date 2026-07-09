@@ -1,6 +1,8 @@
-use core::num::ParseIntError;
+use core::num::{NonZero, ParseIntError, TryFromIntError};
 
 use crate::{PrimitiveError, PrimitiveNumber, PrimitiveNumberRef};
+
+trait NonZeroSealed {}
 
 /// Trait for all primitive [integer types], including the supertrait [`PrimitiveNumber`].
 ///
@@ -40,6 +42,7 @@ pub trait PrimitiveInteger:
     PrimitiveNumber
     + core::cmp::Eq
     + core::cmp::Ord
+    + core::convert::From<Self::NonZero>
     + core::convert::TryFrom<i8, Error: PrimitiveError>
     + core::convert::TryFrom<i16, Error: PrimitiveError>
     + core::convert::TryFrom<i32, Error: PrimitiveError>
@@ -52,6 +55,7 @@ pub trait PrimitiveInteger:
     + core::convert::TryFrom<u64, Error: PrimitiveError>
     + core::convert::TryFrom<u128, Error: PrimitiveError>
     + core::convert::TryFrom<usize, Error: PrimitiveError>
+    + core::convert::TryInto<Self::NonZero, Error = TryFromIntError>
     + core::convert::TryInto<i8, Error: PrimitiveError>
     + core::convert::TryInto<i16, Error: PrimitiveError>
     + core::convert::TryInto<i32, Error: PrimitiveError>
@@ -72,6 +76,7 @@ pub trait PrimitiveInteger:
     + core::ops::BitAnd<Self, Output = Self>
     + core::ops::BitAndAssign<Self>
     + core::ops::BitOr<Self, Output = Self>
+    + core::ops::BitOr<Self::NonZero, Output = Self::NonZero>
     + core::ops::BitOrAssign<Self>
     + core::ops::BitXor<Self, Output = Self>
     + core::ops::BitXorAssign<Self>
@@ -188,6 +193,11 @@ pub trait PrimitiveInteger:
     + for<'a> core::ops::ShrAssign<&'a u128>
     + for<'a> core::ops::ShrAssign<&'a usize>
 {
+    /// The non-zero integer type wrapping this primitive integer.
+    ///
+    /// This is always `core::num::NonZero<Self>`.
+    type NonZero: NonZeroPrimitiveInteger<Integer = Self>;
+
     /// The size of this integer type in bits.
     const BITS: u32;
 
@@ -594,9 +604,140 @@ pub trait PrimitiveIntegerRef<T>:
 {
 }
 
+/// Trait for [`NonZero`] primitive integers.
+///
+/// This encapsulates trait implementations, constants, and inherent methods that are common among
+/// all of the implementations of `NonZero<T>`, where `T` is a [`PrimitiveInteger`].
+///
+/// See the corresponding items on the individual types for more documentation and examples.
+///
+/// This trait is sealed with a private trait to prevent downstream implementations, so we may
+/// continue to expand along with the standard library without worrying about breaking changes for
+/// implementors.
+///
+/// # Examples
+///
+/// ```
+/// use num_primitive::NonZeroPrimitiveInteger;
+/// use core::num::NonZero;
+///
+/// fn bits_and_zeros<T: NonZeroPrimitiveInteger>(n: T) -> (u32, u32, u32) {
+///     (T::BITS, n.leading_zeros(), n.trailing_zeros())
+/// }
+///
+/// assert_eq!(bits_and_zeros(NonZero::new(0b0010_1000u8).unwrap()), (8, 2, 3));
+/// assert_eq!(bits_and_zeros(NonZero::new(1i64).unwrap()), (64, 63, 0));
+/// ```
+#[expect(private_bounds)]
+pub trait NonZeroPrimitiveInteger:
+    'static
+    + NonZeroSealed
+    + core::cmp::Eq
+    + core::cmp::Ord
+    + core::convert::Into<Self::Integer>
+    + core::convert::TryFrom<Self::Integer, Error = TryFromIntError>
+    + core::convert::TryFrom<NonZero<i8>, Error: PrimitiveError>
+    + core::convert::TryFrom<NonZero<i16>, Error: PrimitiveError>
+    + core::convert::TryFrom<NonZero<i32>, Error: PrimitiveError>
+    + core::convert::TryFrom<NonZero<i64>, Error: PrimitiveError>
+    + core::convert::TryFrom<NonZero<i128>, Error: PrimitiveError>
+    + core::convert::TryFrom<NonZero<isize>, Error: PrimitiveError>
+    + core::convert::TryFrom<NonZero<u8>, Error: PrimitiveError>
+    + core::convert::TryFrom<NonZero<u16>, Error: PrimitiveError>
+    + core::convert::TryFrom<NonZero<u32>, Error: PrimitiveError>
+    + core::convert::TryFrom<NonZero<u64>, Error: PrimitiveError>
+    + core::convert::TryFrom<NonZero<u128>, Error: PrimitiveError>
+    + core::convert::TryFrom<NonZero<usize>, Error: PrimitiveError>
+    + core::convert::TryInto<NonZero<i8>, Error: PrimitiveError>
+    + core::convert::TryInto<NonZero<i16>, Error: PrimitiveError>
+    + core::convert::TryInto<NonZero<i32>, Error: PrimitiveError>
+    + core::convert::TryInto<NonZero<i64>, Error: PrimitiveError>
+    + core::convert::TryInto<NonZero<i128>, Error: PrimitiveError>
+    + core::convert::TryInto<NonZero<isize>, Error: PrimitiveError>
+    + core::convert::TryInto<NonZero<u8>, Error: PrimitiveError>
+    + core::convert::TryInto<NonZero<u16>, Error: PrimitiveError>
+    + core::convert::TryInto<NonZero<u32>, Error: PrimitiveError>
+    + core::convert::TryInto<NonZero<u64>, Error: PrimitiveError>
+    + core::convert::TryInto<NonZero<u128>, Error: PrimitiveError>
+    + core::convert::TryInto<NonZero<usize>, Error: PrimitiveError>
+    + core::fmt::Binary
+    + core::fmt::Debug
+    + core::fmt::Display
+    + core::fmt::LowerExp
+    + core::fmt::LowerHex
+    + core::fmt::Octal
+    + core::fmt::UpperExp
+    + core::fmt::UpperHex
+    + core::hash::Hash
+    + core::marker::Copy
+    + core::marker::Send
+    + core::marker::Sync
+    + core::marker::Unpin
+    + core::ops::BitOr<Self, Output = Self>
+    + core::ops::BitOr<Self::Integer, Output = Self>
+    + core::ops::BitOrAssign<Self>
+    + core::ops::BitOrAssign<Self::Integer>
+    + core::panic::RefUnwindSafe
+    + core::panic::UnwindSafe
+    + core::str::FromStr<Err = ParseIntError>
+{
+    /// The primitive integer type that this non-zero type wraps.
+    ///
+    /// For `core::num::NonZero<T>`, this is `T`.
+    type Integer: PrimitiveInteger<NonZero = Self>;
+
+    /// The size of this non-zero integer type in bits.
+    const BITS: u32;
+
+    /// The largest value that can be represented by this non-zero integer type.
+    const MAX: Self;
+
+    /// The smallest value that can be represented by this non-zero integer type.
+    const MIN: Self;
+
+    /// Multiplies two non-zero integers together. Returns [`None`] on overflow.
+    fn checked_mul(self, other: Self) -> Option<Self>;
+
+    /// Raises non-zero value to an integer power. Returns [`None`] on overflow.
+    fn checked_pow(self, other: u32) -> Option<Self>;
+
+    /// Returns the number of ones in the binary representation of `self`.
+    fn count_ones(self) -> NonZero<u32>;
+
+    /// Returns the contained value as a primitive type.
+    fn get(self) -> Self::Integer;
+
+    /// Returns the number of leading zeros in the binary representation of `self`.
+    fn leading_zeros(self) -> u32;
+
+    /// Creates a non-zero if the given value is not zero.
+    fn new(n: Self::Integer) -> Option<Self>;
+
+    /// Multiplies two non-zero integers together, saturating at the numeric bounds
+    /// instead of overflowing.
+    fn saturating_mul(self, other: Self) -> Self;
+
+    /// Raise non-zero value to an integer power, saturating at the numeric bounds
+    /// instead of overflowing.
+    fn saturating_pow(self, other: u32) -> Self;
+
+    /// Returns the number of trailing zeros in the binary representation of `self`.
+    fn trailing_zeros(self) -> u32;
+
+    /// Creates a non-zero without checking whether the value is non-zero.
+    /// This results in undefined behavior if the value is zero.
+    ///
+    /// # Safety
+    ///
+    /// The value must not be zero.
+    unsafe fn new_unchecked(n: Self::Integer) -> Self;
+}
+
 macro_rules! impl_integer {
     ($($Integer:ident),*) => {$(
         impl PrimitiveInteger for $Integer {
+            type NonZero = NonZero<Self>;
+
             use_consts!(Self::{
                 BITS: u32,
                 MAX: Self,
@@ -693,6 +834,35 @@ macro_rules! impl_integer {
         }
 
         impl PrimitiveIntegerRef<$Integer> for &$Integer {}
+
+        impl NonZeroSealed for NonZero<$Integer> {}
+
+        impl NonZeroPrimitiveInteger for NonZero<$Integer> {
+            type Integer = $Integer;
+
+            use_consts!(Self::{
+                BITS: u32,
+                MAX: Self,
+                MIN: Self,
+            });
+
+            forward! {
+                fn new(n: Self::Integer) -> Option<Self>;
+            }
+            forward! {
+                fn checked_mul(self, other: Self) -> Option<Self>;
+                fn checked_pow(self, other: u32) -> Option<Self>;
+                fn count_ones(self) -> NonZero<u32>;
+                fn get(self) -> Self::Integer;
+                fn leading_zeros(self) -> u32;
+                fn saturating_mul(self, other: Self) -> Self;
+                fn saturating_pow(self, other: u32) -> Self;
+                fn trailing_zeros(self) -> u32;
+            }
+            forward! {
+                unsafe fn new_unchecked(n: Self::Integer) -> Self;
+            }
+        }
     )*}
 }
 
