@@ -1,3 +1,13 @@
+# Release 0.3.9 (2026-07-09)
+
+- Updated to MSRV 1.97.
+- Added `PrimitiveInteger::{highest_one,lowest_one}`.
+- Added `PrimitiveInteger::{isolate_highest_one,isolate_lowest_one}`.
+- Added `PrimitiveUnsigned::bit_width`.
+- Added `NonZeroPrimitiveInteger::{highest_one,lowest_one}`.
+- Added `NonZeroPrimitiveInteger::{isolate_highest_one,isolate_lowest_one}`.
+- Added `NonZeroPrimitiveUnsigned::bit_width`.
+
 # Release 0.3.8 (2026-07-09)
 
 - Added traits for `NonZero`-wrapped primitive integers: `NonZeroPrimitiveInteger`,
