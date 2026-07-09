@@ -29,6 +29,14 @@ macro_rules! forward {
             unsafe { Self::$method(self $( , $arg )* ) }
         }
     )*};
+    ($(unsafe fn $method:ident ( $( $arg:ident : $ty:ty ),* ) -> $ret:ty ; )*) => {$(
+        #[doc = forward_doc!($method)]
+        #[inline]
+        unsafe fn $method($( $arg : $ty ),* ) -> $ret {
+            // SAFETY: we're just passing through here!
+            unsafe { Self::$method($( $arg ),* ) }
+        }
+    )*};
 }
 
 /// A string suitable for method `#[doc = ...]`

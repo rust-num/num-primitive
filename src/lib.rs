@@ -15,6 +15,9 @@
 //! types, as well as associated constants and methods matching their inherent
 //! items. `PrimitiveFloat` also adds the contents of `core::{float}::consts`.
 //!
+//! [`NonZero`][core::num::NonZero] integer wrappers are similarly supported by
+//! [`NonZeroPrimitiveInteger`], [`NonZeroPrimitiveSigned`], and [`NonZeroPrimitiveUnsigned`].
+//!
 //! It is not a goal of this crate to *add* any functionality to the primitive
 //! types, only to expose what is already available in the standard library in a
 //! more generic way. The traits are also [sealed] against downstream
@@ -73,7 +76,7 @@ mod tests;
 pub use self::bytes::PrimitiveBytes;
 pub use self::error::PrimitiveError;
 pub use self::float::{PrimitiveFloat, PrimitiveFloatRef, PrimitiveFloatToInt};
-pub use self::integer::{PrimitiveInteger, PrimitiveIntegerRef};
+pub use self::integer::{NonZeroPrimitiveInteger, PrimitiveInteger, PrimitiveIntegerRef};
 pub use self::number::{PrimitiveNumber, PrimitiveNumberAs, PrimitiveNumberRef};
-pub use self::signed::{PrimitiveSigned, PrimitiveSignedRef};
-pub use self::unsigned::{PrimitiveUnsigned, PrimitiveUnsignedRef};
+pub use self::signed::{NonZeroPrimitiveSigned, PrimitiveSigned, PrimitiveSignedRef};
+pub use self::unsigned::{NonZeroPrimitiveUnsigned, PrimitiveUnsigned, PrimitiveUnsignedRef};
