@@ -1,3 +1,9 @@
+# Release 0.3.8 (2026-07-09)
+
+- Added traits for `NonZero`-wrapped primitive integers: `NonZeroPrimitiveInteger`,
+  `NonZeroPrimitiveSigned`, and `NonZeroPrimitiveUnsigned`.
+- Extended `PrimitiveInteger` and `PrimitiveUnsigned` for `NonZero` interactions.
+
 # Release 0.3.7 (2026-03-15)
 
 - Updated to MSRV 1.94.
