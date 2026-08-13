@@ -55,6 +55,8 @@
 
 #![no_std]
 #![cfg_attr(docsrs, feature(doc_cfg))]
+#![feature(min_generic_const_args)]
+#![expect(incomplete_features)]
 
 #[cfg(feature = "std")]
 extern crate std;
@@ -62,7 +64,6 @@ extern crate std;
 #[macro_use]
 mod macros;
 
-mod bytes;
 mod error;
 mod float;
 mod integer;
@@ -73,7 +74,6 @@ mod unsigned;
 #[cfg(test)]
 mod tests;
 
-pub use self::bytes::PrimitiveBytes;
 pub use self::error::PrimitiveError;
 pub use self::float::{PrimitiveFloat, PrimitiveFloatRef, PrimitiveFloatToInt};
 pub use self::integer::{NonZeroPrimitiveInteger, PrimitiveInteger, PrimitiveIntegerRef};
