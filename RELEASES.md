@@ -1,3 +1,11 @@
+# Release 0.3.10 (2026-08-20)
+
+- Updated to MSRV 1.98.
+- Added `NonZeroPrimitiveInteger::from_str_radix`.
+- Added `PrimitiveFloat::algebraic_{add,div,mul,rem,sub}`
+- Added `PrimitiveInteger::{NumBuffer,format_into}`.
+- Added `PrimitiveNumBuffer` to abstract `core::fmt::NumBuffer<T>`.
+
 # Release 0.3.9 (2026-07-09)
 
 - Updated to MSRV 1.97.

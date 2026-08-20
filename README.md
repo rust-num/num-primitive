@@ -1,7 +1,7 @@
 # num-primitive
 
 [![crate](https://img.shields.io/crates/v/num-primitive.svg)](https://crates.io/crates/num-primitive)
-[![minimum rust 1.97](https://img.shields.io/badge/rust-1.97+-blue.svg)](https://rust-lang.github.io/rfcs/2495-min-rust-version.html)
+[![minimum rust 1.98](https://img.shields.io/badge/rust-1.98+-blue.svg)](https://rust-lang.github.io/rfcs/2495-min-rust-version.html)
 [![documentation](https://docs.rs/num-primitive/badge.svg)](https://docs.rs/num-primitive)
 [![build status](https://github.com/rust-num/num-primitive/actions/workflows/ci.yml/badge.svg)](https://github.com/rust-num/num-primitive/actions/workflows/ci.yml)
 

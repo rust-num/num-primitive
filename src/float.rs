@@ -186,6 +186,21 @@ pub trait PrimitiveFloat:
     /// Computes the absolute value of `self`.
     fn abs(self) -> Self;
 
+    /// Float addition that allows optimizations based on algebraic rules.
+    fn algebraic_add(self, rhs: Self) -> Self;
+
+    /// Float division that allows optimizations based on algebraic rules.
+    fn algebraic_div(self, rhs: Self) -> Self;
+
+    /// Float multiplication that allows optimizations based on algebraic rules.
+    fn algebraic_mul(self, rhs: Self) -> Self;
+
+    /// Float remainder that allows optimizations based on algebraic rules.
+    fn algebraic_rem(self, rhs: Self) -> Self;
+
+    /// Float subtraction that allows optimizations based on algebraic rules.
+    fn algebraic_sub(self, rhs: Self) -> Self;
+
     /// Restrict a value to a certain interval unless it is NaN.
     fn clamp(self, min: Self, max: Self) -> Self;
 
@@ -522,6 +537,11 @@ macro_rules! impl_float {
             }
             forward! {
                 fn abs(self) -> Self;
+                fn algebraic_add(self, rhs: Self) -> Self;
+                fn algebraic_div(self, rhs: Self) -> Self;
+                fn algebraic_mul(self, rhs: Self) -> Self;
+                fn algebraic_rem(self, rhs: Self) -> Self;
+                fn algebraic_sub(self, rhs: Self) -> Self;
                 fn clamp(self, min: Self, max: Self) -> Self;
                 fn classify(self) -> FpCategory;
                 fn copysign(self, sign: Self) -> Self;
