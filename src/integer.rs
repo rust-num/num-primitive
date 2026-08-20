@@ -1,8 +1,9 @@
+use core::fmt::NumBuffer;
 use core::num::{NonZero, ParseIntError, TryFromIntError};
 
 use crate::{PrimitiveError, PrimitiveNumber, PrimitiveNumberRef};
 
-trait NonZeroSealed {}
+trait Sealed {}
 
 /// Trait for all primitive [integer types], including the supertrait [`PrimitiveNumber`].
 ///
@@ -195,8 +196,13 @@ pub trait PrimitiveInteger:
 {
     /// The non-zero integer type wrapping this primitive integer.
     ///
-    /// This is always `core::num::NonZero<Self>`.
+    /// This is always [`core::num::NonZero<Self>`].
     type NonZero: NonZeroPrimitiveInteger<Integer = Self>;
+
+    /// The buffer type for [`format_into`][Self::format_into].
+    ///
+    /// This is always [`core::fmt::NumBuffer<Self>`].
+    type NumBuffer: PrimitiveNumBuffer;
 
     /// The size of this integer type in bits.
     const BITS: u32;
@@ -270,6 +276,9 @@ pub trait PrimitiveInteger:
     /// `q` such that `self = q * rhs + r`, with `r = self.rem_euclid(rhs)` and `0 <= r <
     /// abs(rhs)`.
     fn div_euclid(self, rhs: Self) -> Self;
+
+    /// Writes `self` in decimal format into the given buffer, and returns it as a borrowed string.
+    fn format_into(self, buf: &mut Self::NumBuffer) -> &str;
 
     /// Converts an integer from big endian to the target's endianness.
     fn from_be(value: Self) -> Self;
@@ -643,7 +652,7 @@ pub trait PrimitiveIntegerRef<T>:
 #[expect(private_bounds)]
 pub trait NonZeroPrimitiveInteger:
     'static
-    + NonZeroSealed
+    + Sealed
     + core::cmp::Eq
     + core::cmp::Ord
     + core::convert::Into<Self::Integer>
@@ -716,6 +725,9 @@ pub trait NonZeroPrimitiveInteger:
     /// Returns the number of ones in the binary representation of `self`.
     fn count_ones(self) -> NonZero<u32>;
 
+    /// Parses a non-zero integer from a string slice with digits in a given base.
+    fn from_str_radix(src: &str, radix: u32) -> Result<Self, ParseIntError>;
+
     /// Returns the contained value as a primitive type.
     fn get(self) -> Self::Integer;
 
@@ -757,10 +769,61 @@ pub trait NonZeroPrimitiveInteger:
     unsafe fn new_unchecked(n: Self::Integer) -> Self;
 }
 
+/// Trait for [`NumBuffer<T>`] for the decimal formatting of a primitive integer type.
+///
+/// In particular, this is used as a bound for the associated type [`PrimitiveInteger::NumBuffer`],
+/// passed as an argument to the [`format_into`][`PrimitiveInteger::format_into`] method. The main
+/// use for this trait is just to create a buffer with [`new`][Self::new].
+///
+/// This trait is sealed with a private trait to prevent downstream implementations, so we may
+/// continue to expand along with the standard library without worrying about breaking changes for
+/// implementors.
+///
+/// # Examples
+///
+/// ```
+/// use num_primitive::{PrimitiveInteger, PrimitiveNumBuffer};
+///
+/// fn check_format_into<T: PrimitiveInteger>(x: T) {
+///     assert!(size_of::<T::NumBuffer>() > size_of::<T>());
+///
+///     let mut buf = T::NumBuffer::new();
+///     assert_eq!(x.format_into(&mut buf), x.to_string());
+///
+///     // Note that the buffer can be reused for multiple calls.
+///     assert_eq!(T::default().format_into(&mut buf), "0");
+///     assert_eq!(T::as_from(1).format_into(&mut buf), "1");
+///     assert_eq!(T::MIN.format_into(&mut buf), T::MIN.to_string());
+///     assert_eq!(T::MAX.format_into(&mut buf), T::MAX.to_string());
+/// }
+///
+/// check_format_into(123_u64);
+/// check_format_into(-42_i32);
+///
+/// assert!(size_of::<<u64 as PrimitiveInteger>::NumBuffer>()
+///       > size_of::<<i32 as PrimitiveInteger>::NumBuffer>());
+/// ```
+#[expect(private_bounds)]
+pub trait PrimitiveNumBuffer:
+    'static
+    + Sealed
+    + core::fmt::Debug
+    + core::marker::Send
+    + core::marker::Sized
+    + core::marker::Sync
+    + core::marker::Unpin
+    + core::panic::RefUnwindSafe
+    + core::panic::UnwindSafe
+{
+    /// Creates a buffer.
+    fn new() -> Self;
+}
+
 macro_rules! impl_integer {
     ($($Integer:ident),*) => {$(
         impl PrimitiveInteger for $Integer {
             type NonZero = NonZero<Self>;
+            type NumBuffer = NumBuffer<Self>;
 
             use_consts!(Self::{
                 BITS: u32,
@@ -791,6 +854,7 @@ macro_rules! impl_integer {
                 fn count_ones(self) -> u32;
                 fn count_zeros(self) -> u32;
                 fn div_euclid(self, rhs: Self) -> Self;
+                fn format_into(self, buf: &mut Self::NumBuffer) -> &str;
                 fn highest_one(self) -> Option<u32>;
                 fn ilog(self, base: Self) -> u32;
                 fn ilog10(self) -> u32;
@@ -863,7 +927,7 @@ macro_rules! impl_integer {
 
         impl PrimitiveIntegerRef<$Integer> for &$Integer {}
 
-        impl NonZeroSealed for NonZero<$Integer> {}
+        impl Sealed for NonZero<$Integer> {}
 
         impl NonZeroPrimitiveInteger for NonZero<$Integer> {
             type Integer = $Integer;
@@ -875,6 +939,7 @@ macro_rules! impl_integer {
             });
 
             forward! {
+                fn from_str_radix(src: &str, radix: u32) -> Result<Self, ParseIntError>;
                 fn new(n: Self::Integer) -> Option<Self>;
             }
             forward! {
@@ -893,6 +958,14 @@ macro_rules! impl_integer {
             }
             forward! {
                 unsafe fn new_unchecked(n: Self::Integer) -> Self;
+            }
+        }
+
+        impl Sealed for NumBuffer<$Integer> {}
+
+        impl PrimitiveNumBuffer for NumBuffer<$Integer> {
+            forward! {
+                fn new() -> Self;
             }
         }
     )*}
